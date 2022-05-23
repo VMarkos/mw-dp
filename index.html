@@ -16,6 +16,27 @@
 			</div>
 			<div class="question-container">
 				<h2>Question A</h2>
+				<div class="stats-container">
+					<svg id="population" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+						<defs>
+							<marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5"
+								markerWidth="6" markerHeight="6"
+								orient="auto-start-reverse">
+							  <path d="M 0 0 L 10 5 L 0 10 z" />
+							</marker>
+						</defs>
+						<rect width="80" height="80"/>
+					</svg>
+					<svg id="sample" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+						<defs>
+							<marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5"
+								markerWidth="6" markerHeight="6"
+								orient="auto-start-reverse">
+							  <path d="M 0 0 L 10 5 L 0 10 z" />
+							</marker>
+						</defs>
+					</svg>
+				</div>
 				<p>Some content</p>
 				<p>Some more content that is supposed to take up some space.</p>
 				<div class="submit-button-container" onclick="proceedToNext('qa','qb')">
@@ -37,5 +58,6 @@
 				</div>
 			</div>
 		</div>
+		<script type="text/javascript" src="questionGenerator.js"></script>
     </body>
 </html>

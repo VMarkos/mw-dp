@@ -27,6 +27,7 @@ body {
 	display: flex;
 	flex-direction: column;
 	gap: 5px;
+	max-width: 400px;
 	background: white;
 	padding: 10px;
 	border-radius: 0px 0px 5px 5px;
@@ -54,6 +55,11 @@ body {
 	width: 40%;
 	border-radius: 0px 5px 0px 0px;
 	border-top: 6px solid white;
+}
+
+.stats-container {
+	display: flex;
+	gap: 5px;
 }
 
 /* Buttons */
@@ -86,6 +92,8 @@ body {
 .invisible {
 	transform: scale(0);
 }
+
+/* Charts */
 
 /*
  * #e8f9fd --- ice
