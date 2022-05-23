@@ -18,12 +18,12 @@
 				<h2>Question A</h2>
 				<p>Some content</p>
 				<p>Some more content that is supposed to take up some space.</p>
-				<div class="submit-button-container" onclick="proceedToNext()">
+				<div class="submit-button-container" onclick="proceedToNext('qa','qb')">
 					Next
 				</div>
 			</div>
 		</div>
-		<div id="qb" class="question-row-container no-display">
+		<div id="qb" class="question-row-container no-display invisible">
 			<div class="progress-bar">
 				<div id="progress-bar-left" class="progress-bar-left"></div>
 				<div id="progress-bar-right" class="progress-bar-right"></div>
@@ -32,7 +32,7 @@
 				<h2>Question B</h2>
 				<p>Some content</p>
 				<p>Some more content that is supposed to take up some space.</p>
-				<div class="submit-button-container" onclick="animateProgressBar()">
+				<div class="submit-button-container" onclick="proceedToNext('qb','qa')">
 					Next
 				</div>
 			</div>

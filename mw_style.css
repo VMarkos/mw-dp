@@ -80,9 +80,11 @@ body {
 /* Animation */
 
 .no-display {
-	scale: 0%;
 	display: none;
-	visibility: hidden;
+}
+
+.invisible {
+	transform: scale(0);
 }
 
 /*
