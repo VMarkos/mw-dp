@@ -26,8 +26,8 @@ body {
 .question-container {
 	display: flex;
 	flex-direction: column;
-	gap: 5px;
-	max-width: 400px;
+	/* gap: 5px; */
+	width: 600px;
 	background: white;
 	padding: 10px;
 	border-radius: 0px 0px 5px 5px;
@@ -59,7 +59,13 @@ body {
 
 .stats-container {
 	display: flex;
-	gap: 5px;
+	gap: 20px;
+	padding: 20px;
+}
+
+.stats-border {
+	border: 2px dashed #808080;
+	background: #f0f0f0;
 }
 
 /* Buttons */
@@ -94,6 +100,31 @@ body {
 }
 
 /* Charts */
+
+.labels-container {
+	display: flex;
+	justify-content: space-around;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+.labels-container label {
+	font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;;
+	font-size: large;
+	color: #808080;
+}
+
+.diversity-slider-container {
+	display: flex;
+	flex-direction: column;
+	padding: 20px;
+}
+
+.diversity-slider-labels-container {
+	display: flex;
+	justify-content: space-between;
+	font-weight: 700;
+}
 
 /*
  * #e8f9fd --- ice

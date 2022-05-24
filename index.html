@@ -16,29 +16,41 @@
 			</div>
 			<div class="question-container">
 				<h2>Question A</h2>
-				<div class="stats-container">
-					<svg id="population" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-						<defs>
-							<marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5"
-								markerWidth="6" markerHeight="6"
-								orient="auto-start-reverse">
-							  <path d="M 0 0 L 10 5 L 0 10 z" />
-							</marker>
-						</defs>
-						<rect width="80" height="80"/>
-					</svg>
-					<svg id="sample" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-						<defs>
-							<marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5"
-								markerWidth="6" markerHeight="6"
-								orient="auto-start-reverse">
-							  <path d="M 0 0 L 10 5 L 0 10 z" />
-							</marker>
-						</defs>
-					</svg>
+				<p>How diverse would you consider the following <b>ranked</b> sample (right) drawn from the 
+					<b>unranked</b> population shown on the left?</p>
+				<div class="stats-border">
+					<div class="stats-container">
+						<svg id="population" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+							<defs>
+								<marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5"
+									markerWidth="6" markerHeight="6"
+									orient="auto-start-reverse">
+								<path d="M 0 0 L 10 5 L 0 10 z" />
+								</marker>
+							</defs>
+						</svg>
+						<svg id="sample" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+							<defs>
+								<marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5"
+									markerWidth="6" markerHeight="6"
+									orient="auto-start-reverse">
+								<path d="M 0 0 L 10 5 L 0 10 z" />
+								</marker>
+							</defs>
+						</svg>
+					</div>
+					<div class="labels-container">
+						<label>Population</label>
+						<label>Sample</label>
+					</div>
 				</div>
-				<p>Some content</p>
-				<p>Some more content that is supposed to take up some space.</p>
+				<div class="diversity-slider-container">
+					<div class="diversity-slider-labels-container">
+						<div>Low</div>
+						<div>High</div>
+					</div>
+					<input type="range" id="diversity" min="0" max="100" value="50">
+				</div>
 				<div class="submit-button-container" onclick="proceedToNext('qa','qb')">
 					Next
 				</div>
