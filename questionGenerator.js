@@ -5,7 +5,7 @@ const ITEMS = {
     "i0": {
         "population": [3, 4, 6, 8, 3],
         "sample": [2, 2, 3, 4, 1],
-        "populationRanking": undefined,
+        "populationRanking": [0, 0, 1, 0, 1, 1, 1, 2, 2, 2, 2, 2, 2, 4, 3, 4, 3, 4, 3, 3, 3, 3, 3, 3],
         "sampleRanking": [0, 2, 2, 3, 4, 3, 2, 0, 1, 3, 3, 1],
     },
     "i1": {
@@ -35,6 +35,7 @@ const SVG_DEFS = `<defs>
 const N_ITEMS = Object.keys(ITEMS).length;
 
 function generateQuestion(knownPopulation, isRanked, isUserIn, isObserved) { // All boolean except for isRanked = {"population": Boolean, "sample": Boolean}.
+    const statsContainer = document.getElementById("stats-container");
     const itemId = "i" + (Math.floor(N_ITEMS * Math.random()));
     const population = ITEMS[itemId]["population"];
     const sample = ITEMS[itemId]["sample"];
@@ -42,6 +43,17 @@ function generateQuestion(knownPopulation, isRanked, isUserIn, isObserved) { // 
     const populationRanking = ITEMS[itemId]["populationRanking"];
     const colors = shuffleList(COLORS); // Shuffle colors to avoid any correlations between groups and colors.
     let userClass;
+    if (isRanked["population"] && isRanked["sample"]) {
+		statsContainer.style.flexDirection = "column";
+	}
+	if (!isObserved) {
+		if (isRanked["sample"]) {
+			drawRankedList([12], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ["#ffffff"], "Sample", "#808080");
+		} else {
+			drawUnrankedSet([12], ["#ffffff"], "Sample", "#808080");
+		}
+		return;
+	}
     if (isUserIn) {
         userClass = Math.floor(population.length * Math.random());
         addUserClass(colors[userClass]);
@@ -53,7 +65,11 @@ function generateQuestion(knownPopulation, isRanked, isUserIn, isObserved) { // 
             drawUnrankedSet(population, colors, "Population");
         }
     }
-    drawRankedList(sample, sampleRanking, colors, "Sample");
+	if (isRanked["sample"]){
+		drawRankedList(sample, sampleRanking, colors, "Sample");
+	} else {
+		drawUnrankedSet(sample, colors, "Sample");
+	}
 }
 
 function shuffleList(x) { // Fischer-Yates shuffling algorithm.
@@ -68,8 +84,18 @@ function shuffleList(x) { // Fischer-Yates shuffling algorithm.
     return shuffled;
 }
 
+function addOnClickEvents(label, distribution, eventHandler) { // TODO Revise this! (You were here)
+	let element;
+	for (let i = 0; i < distribution.length; i++) {
+		for (let j = 0; j < distribution[i]; j++) {
+			element = document.getElementById(label + "-" + i + "-" + j);
+			element.addEventListener("onclick", eventHandler);
+		}
+	}
+}
+
 function addUserClass(classColor) {
-    const statsContainer = document.getElementById("stats-container");
+    const statsContainer = document.getElementById("all-stats-container");
     const userClassContainer = document.createElement("div");
     const userClassText = document.createElement("div");
     const userClassBullet = document.createElement("div");
@@ -81,10 +107,10 @@ function addUserClass(classColor) {
     console.log(userClassBullet);
     userClassContainer.appendChild(userClassText);
     userClassContainer.appendChild(userClassBullet);
-    statsContainer.appendChild(userClassContainer);
+    statsContainer.prepend(userClassContainer);
 }
 
-function drawUnrankedSet(distribution, colors, label) {
+function drawUnrankedSet(distribution, colors, label, borderColor="white") {
     const VIEWBOX_WIDTH = 200;
     const VIEWBOX_HEIGHT = 200;
     const statsContainer = document.getElementById("stats-container");
@@ -102,7 +128,8 @@ function drawUnrankedSet(distribution, colors, label) {
     for (let i = 0; i < distribution.length; i++) {
         for (let j = 0; j < distribution[i]; j++) {
             particle = document.createElementNS(SVG_NS, "path");
-            particle.style.stroke = "white";
+            particle.id = label + "-" + i + "-" + j;
+            particle.style.stroke = borderColor;
             particle.style.strokeWidth = "0.4";
             particle.style.fill = colors[i];
             x1 = cx + r * Math.cos(count * deltaTheta);
@@ -133,7 +160,7 @@ function drawUnrankedSet(distribution, colors, label) {
     statsContainer.appendChild(container);
 }
 
-function drawRankedList(distribution, ranking, colors, label) {
+function drawRankedList(distribution, ranking, colors, label, borderColor="white") {
     const VIEWBOX_WIDTH = 200;
     const VIEWBOX_HEIGHT = 100;
     const statsContainer = document.getElementById("stats-container");
@@ -148,7 +175,8 @@ function drawRankedList(distribution, ranking, colors, label) {
 	for (let i = 0; i < distribution.length; i++) {
 		for (j = 0; j < distribution[i]; j++) {
 			rect = document.createElementNS(SVG_NS, "rect");
-			rect.style.stroke = "white";
+			rect.id = label + "-" + i + "-" + j;
+			rect.style.stroke = borderColor;
 			rect.style.strokeWidth = "0.4";
 			rect.style.fill = colors[ranking[currentX]];
 			rect.setAttribute("x", currentX * WIDTH);
@@ -195,11 +223,11 @@ function drawRankedList(distribution, ranking, colors, label) {
 
 function initializeQuestions(n=20) {
     for (let i = 0; i < n; i++) {
-        return;       
+        return;
     }
 }
 
-generateQuestion(true, {"population": false, "sample": true}, true, true);
+generateQuestion(true, {"population": false, "sample": true}, true, false);
 
 /*
 In terms of display, you have the following types of questions:

@@ -57,9 +57,16 @@ body {
 	border-top: 6px solid white;
 }
 
-.stats-container {
+.all-stats-container {
 	display: flex;
 	flex-direction: column;
+	gap: 20px;
+	padding: 20px;
+}
+
+.stats-container {
+	display: flex;
+	flex-direction: row;
 	gap: 20px;
 	padding: 20px;
 }
