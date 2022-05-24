@@ -1,9 +1,7 @@
-SVG_NS = "http://www.w3.org/2000/svg";
-const VIEWBOX_WIDTH = 200;
-const VIEWBOX_HEIGHT = 200;
-const radToDeg = 180 / Math.PI;
+const XMLNS = "http://www.w3.org/2000/svg";
+const SVG_NS = "http://www.w3.org/2000/svg";
 
-ITEMS = {
+const ITEMS = {
     "i0": {
         "population": [3, 4, 6, 8, 3],
         "sample": [2, 2, 3, 4, 1],
@@ -18,7 +16,7 @@ ITEMS = {
     },
 };
 
-COLORS = [
+const COLORS = [
     "#f44336",
     "#2196f3",
     "#4caf50",
@@ -26,18 +24,36 @@ COLORS = [
     "#9c27b0",
 ];
 
+const SVG_DEFS = `<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5"
+    markerWidth="6" markerHeight="6"
+    orient="auto-start-reverse">
+<path d="M 0 0 L 10 5 L 0 10 z" />
+</marker>
+</defs>`;
+
 const N_ITEMS = Object.keys(ITEMS).length;
 
 function generateQuestion(knownPopulation, isRanked, isUserIn, isObserved) { // All boolean except for isRanked = {"population": Boolean, "sample": Boolean}.
-	const sampleContainer = document.getElementById("sample");
-    const populationContainer = document.getElementById("population");
     const itemId = "i" + (Math.floor(N_ITEMS * Math.random()));
     const population = ITEMS[itemId]["population"];
     const sample = ITEMS[itemId]["sample"];
     const sampleRanking = ITEMS[itemId]["sampleRanking"];
+    const populationRanking = ITEMS[itemId]["populationRanking"];
     const colors = shuffleList(COLORS); // Shuffle colors to avoid any correlations between groups and colors.
-    drawRankedList(sample, sampleRanking, colors, sampleContainer);
-    drawUnrankedSet(population, colors, populationContainer);
+    let userClass;
+    if (isUserIn) {
+        userClass = Math.floor(population.length * Math.random());
+        addUserClass(colors[userClass]);
+    }
+    if (knownPopulation) {
+        if (isRanked["population"]) {
+            drawRankedList(population, populationRanking, colors, "Population");
+        } else {
+            drawUnrankedSet(population, colors, "Population");
+        }
+    }
+    drawRankedList(sample, sampleRanking, colors, "Sample");
 }
 
 function shuffleList(x) { // Fischer-Yates shuffling algorithm.
@@ -52,14 +68,37 @@ function shuffleList(x) { // Fischer-Yates shuffling algorithm.
     return shuffled;
 }
 
-function drawUnrankedSet(distribution, colors, container) {
+function addUserClass(classColor) {
+    const statsContainer = document.getElementById("stats-container");
+    const userClassContainer = document.createElement("div");
+    const userClassText = document.createElement("div");
+    const userClassBullet = document.createElement("div");
+    userClassContainer.classList.add("user-class-container");
+    userClassText.classList.add("user-class-text");
+    userClassText.innerHTML = "Your class:";
+    userClassBullet.classList.add("user-class-bullet");
+    userClassBullet.style.background = classColor;
+    console.log(userClassBullet);
+    userClassContainer.appendChild(userClassText);
+    userClassContainer.appendChild(userClassBullet);
+    statsContainer.appendChild(userClassContainer);
+}
+
+function drawUnrankedSet(distribution, colors, label) {
+    const VIEWBOX_WIDTH = 200;
+    const VIEWBOX_HEIGHT = 200;
+    const statsContainer = document.getElementById("stats-container");
+    const container = document.createElementNS(SVG_NS, "svg");
+    container.setAttribute("xmlns", XMLNS);
+    container.setAttribute("viewBox", "0 0 " + VIEWBOX_WIDTH + " " + VIEWBOX_HEIGHT);
+    container.innerHTML = SVG_DEFS;
     const N = distribution.reduce((a, b) => a + b);
     const R = VIEWBOX_HEIGHT / 2;
     const r = 0.8 * R;
     const deltaTheta = 2 * Math.PI / N;
     const cx = VIEWBOX_WIDTH / 2;
     const cy = VIEWBOX_HEIGHT / 2;
-    let particle, d, x1, x2, x3, x4, y1, y2, y3, y4, intArcParams, extArcParams, count = 0;
+    let particle, d, x1, x2, x3, x4, y1, y2, y3, y4, intArcParams, extArcParams, overallLabel, overallLabelText, count = 0;
     for (let i = 0; i < distribution.length; i++) {
         for (let j = 0; j < distribution[i]; j++) {
             particle = document.createElementNS(SVG_NS, "path");
@@ -82,13 +121,30 @@ function drawUnrankedSet(distribution, colors, container) {
             count++;
         }
     }
+    overallLabel = document.createElementNS(SVG_NS, "text");
+    overallLabel.setAttribute("x", cx);
+    overallLabel.setAttribute("y", cy);
+    overallLabelText = document.createTextNode(label);
+    overallLabel.appendChild(overallLabelText);
+    overallLabel.setAttribute("font-size", "16");
+    overallLabel.setAttribute("text-anchor", "middle");
+    overallLabel.setAttribute("dominant-baseline", "middle");
+    container.appendChild(overallLabel);
+    statsContainer.appendChild(container);
 }
 
-function drawRankedList(distribution, ranking, colors, container) {
+function drawRankedList(distribution, ranking, colors, label) {
+    const VIEWBOX_WIDTH = 200;
+    const VIEWBOX_HEIGHT = 100;
+    const statsContainer = document.getElementById("stats-container");
+    const container = document.createElementNS(SVG_NS, "svg");
+    container.setAttribute("xmlns", XMLNS);
+    container.setAttribute("viewBox", "0 0 " + VIEWBOX_WIDTH + " " + VIEWBOX_HEIGHT);
+    container.innerHTML = SVG_DEFS;
 	const N = distribution.reduce((a, b) => a + b);
-    const HEIGHT = 0.12 * VIEWBOX_HEIGHT;
+    const HEIGHT = 0.24 * VIEWBOX_HEIGHT;
 	const WIDTH = VIEWBOX_WIDTH / N;
-	let rect, line, firstLabel, lastLabel, firstLabelText, lastLabelText, currentX = 0, currentY = VIEWBOX_HEIGHT / 2 - HEIGHT / 2, lineY = VIEWBOX_HEIGHT / 2 - HEIGHT;
+	let rect, line, firstLabel, lastLabel, overallLabel, firstLabelText, lastLabelText, overallLabelText, currentX = 0, currentY = VIEWBOX_HEIGHT / 2 - HEIGHT / 2, lineY = VIEWBOX_HEIGHT / 2 - HEIGHT;
 	for (let i = 0; i < distribution.length; i++) {
 		for (j = 0; j < distribution[i]; j++) {
 			rect = document.createElementNS(SVG_NS, "rect");
@@ -100,30 +156,60 @@ function drawRankedList(distribution, ranking, colors, container) {
 			rect.setAttribute("width", WIDTH);
 			rect.setAttribute("height", HEIGHT);
 			currentX++;
-			line = document.createElementNS(SVG_NS, "polyline"); // TODO Polyline (marker-end)
-			line.style.stroke = "black";
-			line.style.strokeWidth = "0.5";
-			line.setAttribute("marker-end", "url(#arrow)");
-			line.setAttribute("points", "0," + lineY + " " + (0.98 * VIEWBOX_WIDTH) + "," + lineY);
-            firstLabel = document.createElementNS(SVG_NS, "text");
-            firstLabel.setAttribute("x", 0);
-            firstLabel.setAttribute("y", lineY - 4);
-            firstLabelText = document.createTextNode("first");
-            firstLabel.appendChild(firstLabelText);
-            firstLabel.setAttribute("font-size", "12");
-            lastLabel = document.createElementNS(SVG_NS, "text");
-            lastLabel.setAttribute("x", 0.98 * VIEWBOX_WIDTH);
-            lastLabel.setAttribute("y", lineY - 4);
-            lastLabelText = document.createTextNode("last");
-            lastLabel.setAttribute("text-anchor", "end");
-            lastLabel.appendChild(lastLabelText);
-            lastLabel.setAttribute("font-size", "12");
 			container.appendChild(rect);
-			container.appendChild(line);
-            container.appendChild(firstLabel);
-            container.appendChild(lastLabel);
 		}
 	}
+    line = document.createElementNS(SVG_NS, "polyline");
+    line.style.stroke = "black";
+    line.style.strokeWidth = "0.5";
+    line.setAttribute("marker-end", "url(#arrow)");
+    line.setAttribute("points", "0," + lineY + " " + (0.98 * VIEWBOX_WIDTH) + "," + lineY);
+    firstLabel = document.createElementNS(SVG_NS, "text");
+    firstLabel.setAttribute("x", 0);
+    firstLabel.setAttribute("y", lineY - 4);
+    firstLabelText = document.createTextNode("first");
+    firstLabel.appendChild(firstLabelText);
+    firstLabel.setAttribute("font-size", "12");
+    lastLabel = document.createElementNS(SVG_NS, "text");
+    lastLabel.setAttribute("x", 0.98 * VIEWBOX_WIDTH);
+    lastLabel.setAttribute("y", lineY - 4);
+    lastLabelText = document.createTextNode("last");
+    lastLabel.setAttribute("text-anchor", "end");
+    lastLabel.appendChild(lastLabelText);
+    lastLabel.setAttribute("font-size", "12");
+    overallLabel = document.createElementNS(SVG_NS, "text");
+    overallLabel.setAttribute("x", 0.50 * VIEWBOX_WIDTH);
+    overallLabel.setAttribute("y", VIEWBOX_HEIGHT / 2 + HEIGHT + 8);
+    overallLabelText = document.createTextNode(label);
+    overallLabel.appendChild(overallLabelText);
+    overallLabel.setAttribute("font-size", "16");
+    overallLabel.setAttribute("text-anchor", "middle");
+    overallLabel.setAttribute("dominant-baseline", "middle");
+    container.appendChild(line);
+    container.appendChild(firstLabel);
+    container.appendChild(lastLabel);
+    container.appendChild(overallLabel);
+    statsContainer.appendChild(container);
+
 }
 
-generateQuestion(true, {"population": true, "sample": true}, true, true);
+function initializeQuestions(n=20) {
+    for (let i = 0; i < n; i++) {
+        return;       
+    }
+}
+
+generateQuestion(true, {"population": false, "sample": true}, true, true);
+
+/*
+In terms of display, you have the following types of questions:
+    1. Questions displaying both population and sample and ask for an estimation of diversity with a slider; (check)
+    2. Questions displaying only the sample and ask for an estimation of diversity with a slider; (check)
+    3. Questions displaying both population and sample as well as the user's class + a slider; (check)
+    4. Questions displaying only the sample as well as the user's class + a slider; (check)
+    5. Questions displaying only the population and asking the user to create a sample with given diversity;
+    6. Questions displaying population as well as the user's class and asking them to create a sample with given diversity;
+    7. Questions displaying only class colors and asking users to create a sample of a given diversity.
+*/
+
+// TODO Consider changing layout depending on variables' assignment (like, when we have at least one circle prefer a horizontal layout instead of a vertical one etc).

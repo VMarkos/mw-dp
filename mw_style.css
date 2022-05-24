@@ -59,6 +59,7 @@ body {
 
 .stats-container {
 	display: flex;
+	flex-direction: column;
 	gap: 20px;
 	padding: 20px;
 }
@@ -124,6 +125,24 @@ body {
 	display: flex;
 	justify-content: space-between;
 	font-weight: 700;
+}
+
+.user-class-container {
+	display: flex;
+	gap: 20px;
+	align-items: center;
+}
+
+.user-class-bullet {
+	border-radius: 50%;
+	width: 30px;
+	height: 30px;
+}
+
+.user-class-text {
+	font-weight: 700;
+	font-size: x-large;
+	color: black;
 }
 
 /*
