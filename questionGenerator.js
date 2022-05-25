@@ -1,5 +1,6 @@
 const XMLNS = "http://www.w3.org/2000/svg";
 const SVG_NS = "http://www.w3.org/2000/svg";
+const SAMPLE_SIZE = 12;
 
 const ITEMS = {
     "i0": {
@@ -55,11 +56,11 @@ function generateQuestion(knownPopulation, isRanked, isUserIn, isObserved) { // 
             drawUnrankedSet(population, colors, "Population");
         }
 		if (isRanked["sample"]) {
-			drawRankedList([12], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ["#ffffff"], "Sample", "#808080");
+			drawRankedList([SAMPLE_SIZE], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ["#ffffff"], "Sample", "#808080");
 		} else {
-			drawUnrankedSet([12], ["#ffffff"], "Sample", "#808080");
+			drawUnrankedSet([SAMPLE_SIZE], ["#ffffff"], "Population", "#808080");
 		}
-        addOnClickEvents("Sample", [12], addToSample);
+        addOnClickEvents("Sample", population, addToSample);
         return;
 	}
     if (isUserIn) {
@@ -94,22 +95,37 @@ function shuffleList(x) { // Fischer-Yates shuffling algorithm.
 
 function addOnClickEvents(label, distribution, eventHandler) { // TODO Revise this! (You were here)
 	let element;
-    console.log("addOnClickEvents", distribution);
+    // console.log("addOnClickEvents", distribution);
 	for (let i = 0; i < distribution.length; i++) {
 		for (let j = 0; j < distribution[i]; j++) {
-			element = document.getElementById(label + "-" + i + "-" + j);
-            console.log(element.id);
+			element = document.getElementById("Population" + "-" + i + "-" + j);
+            console.log(element.id, eventHandler);
             element.style.cursor = "pointer";
-			element.addEventListener("onclick", eventHandler);
+			element.addEventListener("mouseup", eventHandler);
+			element.setAttribute("data-listener", true);
 		}
 	}
 }
 
-function addToSample(event) {
+function addToSample(event) { // TODO Consider adding a number on top of each element in case the generated sample is ranked.
     const element = event.target;
-    const currentSampleElement = document.getElementById("0-" + sampleCurrentPosition);
+    const currentSampleElement = document.getElementById("Sample-0-" + sampleCurrentPosition);
+    // console.log(element, currentSampleElement);
     currentSampleElement.style.fill = element.style.fill;
+    currentSampleElement.style.stroke = "white";
+    element.style.fillOpacity = "0.5";
+    element.removeEventListener("mouseup", addToSample);
+    element.setAttribute("data-listener", false);
     sampleCurrentPosition++;
+    if (sampleCurrentPosition === SAMPLE_SIZE) {
+		const allPopulationElements = document.querySelectorAll("[id^='Population-']");
+		for (const populationElement of allPopulationElements) {
+			if (populationElement.getAttribute("data-listener")) {
+				populationElement.removeEventListener("mouseup", addToSample);
+				populationElement.setAttribute("data-listener", false);
+			}
+		}
+	}
 }
 
 function addUserClass(classColor) {
@@ -204,7 +220,7 @@ function drawRankedList(distribution, ranking, colors, label, borderColor="white
 			rect.setAttribute("height", HEIGHT);
 			currentX++;
 			container.appendChild(rect);
-            console.log("drawRankedList", rect.id);
+            // console.log("drawRankedList", rect.id);
 		}
 	}
     line = document.createElementNS(SVG_NS, "polyline");
