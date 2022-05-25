@@ -11,7 +11,7 @@ const ITEMS = {
     "i1": {
         "population": [2, 5, 1, 8, 8],
         "sample": [2, 2, 1, 4, 3],
-        "populationRanking": undefined,
+        "populationRanking": [0, 1, 2, 3, 4, 4, 3, 1, 1, 0, 3, 4, 3, 4, 3, 4, 1, 3, 1, 4, 3, 4, 3, 4],
         "sampleRanking": [0, 4, 4, 2, 3, 4, 3, 0, 1, 3, 3, 1],
     },
 };
@@ -34,6 +34,8 @@ const SVG_DEFS = `<defs>
 
 const N_ITEMS = Object.keys(ITEMS).length;
 
+let sampleCurrentPosition = 0;
+
 function generateQuestion(knownPopulation, isRanked, isUserIn, isObserved) { // All boolean except for isRanked = {"population": Boolean, "sample": Boolean}.
     const statsContainer = document.getElementById("stats-container");
     const itemId = "i" + (Math.floor(N_ITEMS * Math.random()));
@@ -47,12 +49,18 @@ function generateQuestion(knownPopulation, isRanked, isUserIn, isObserved) { // 
 		statsContainer.style.flexDirection = "column";
 	}
 	if (!isObserved) {
+        if (isRanked["population"]) {
+            drawRankedList(population, populationRanking, colors, "Population");
+        } else {
+            drawUnrankedSet(population, colors, "Population");
+        }
 		if (isRanked["sample"]) {
 			drawRankedList([12], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ["#ffffff"], "Sample", "#808080");
 		} else {
 			drawUnrankedSet([12], ["#ffffff"], "Sample", "#808080");
 		}
-		return;
+        addOnClickEvents("Sample", [12], addToSample);
+        return;
 	}
     if (isUserIn) {
         userClass = Math.floor(population.length * Math.random());
@@ -86,12 +94,22 @@ function shuffleList(x) { // Fischer-Yates shuffling algorithm.
 
 function addOnClickEvents(label, distribution, eventHandler) { // TODO Revise this! (You were here)
 	let element;
+    console.log("addOnClickEvents", distribution);
 	for (let i = 0; i < distribution.length; i++) {
 		for (let j = 0; j < distribution[i]; j++) {
 			element = document.getElementById(label + "-" + i + "-" + j);
+            console.log(element.id);
+            element.style.cursor = "pointer";
 			element.addEventListener("onclick", eventHandler);
 		}
 	}
+}
+
+function addToSample(event) {
+    const element = event.target;
+    const currentSampleElement = document.getElementById("0-" + sampleCurrentPosition);
+    currentSampleElement.style.fill = element.style.fill;
+    sampleCurrentPosition++;
 }
 
 function addUserClass(classColor) {
@@ -104,7 +122,7 @@ function addUserClass(classColor) {
     userClassText.innerHTML = "Your class:";
     userClassBullet.classList.add("user-class-bullet");
     userClassBullet.style.background = classColor;
-    console.log(userClassBullet);
+    // console.log(userClassBullet);
     userClassContainer.appendChild(userClassText);
     userClassContainer.appendChild(userClassBullet);
     statsContainer.prepend(userClassContainer);
@@ -127,6 +145,7 @@ function drawUnrankedSet(distribution, colors, label, borderColor="white") {
     let particle, d, x1, x2, x3, x4, y1, y2, y3, y4, intArcParams, extArcParams, overallLabel, overallLabelText, count = 0;
     for (let i = 0; i < distribution.length; i++) {
         for (let j = 0; j < distribution[i]; j++) {
+            // console.log("drawUnrankedSet", i, j);
             particle = document.createElementNS(SVG_NS, "path");
             particle.id = label + "-" + i + "-" + j;
             particle.style.stroke = borderColor;
@@ -185,6 +204,7 @@ function drawRankedList(distribution, ranking, colors, label, borderColor="white
 			rect.setAttribute("height", HEIGHT);
 			currentX++;
 			container.appendChild(rect);
+            console.log("drawRankedList", rect.id);
 		}
 	}
     line = document.createElementNS(SVG_NS, "polyline");
@@ -227,7 +247,7 @@ function initializeQuestions(n=20) {
     }
 }
 
-generateQuestion(true, {"population": false, "sample": true}, true, false);
+generateQuestion(true, {"population": true, "sample": true}, true, false);
 
 /*
 In terms of display, you have the following types of questions:
