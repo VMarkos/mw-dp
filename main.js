@@ -16,4 +16,5 @@ function proceedToNext() {
 	answeredQuestions++;
 	const next = document.getElementById("Q-" + answeredQuestions);
 	nextQuestion(previous, next);
+	initializeSamplePositions();
 }

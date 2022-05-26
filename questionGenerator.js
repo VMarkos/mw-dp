@@ -1,7 +1,7 @@
 const XMLNS = "http://www.w3.org/2000/svg";
 const SVG_NS = "http://www.w3.org/2000/svg";
 const SAMPLE_SIZE = 12;
-const TOTAL_QUESTIONS = 10;
+const TOTAL_QUESTIONS = 20;
 
 const ITEMS = {
     "i0": {
@@ -45,14 +45,17 @@ const chosenItems = {} // Maps sample entries ids to population ids.
 const N_ITEMS = Object.keys(ITEMS).length;
 
 const samplePositions = new Array(SAMPLE_SIZE);
-for (let i = 0; i < SAMPLE_SIZE; i++) {
-    samplePositions[i] = false;
-}
 
 let answeredQuestions = 0;
 
+function initializeSamplePositions() {
+    for (let i = 0; i < SAMPLE_SIZE; i++) {
+        samplePositions[i] = false;
+    }
+}
+
 function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObserved) { // All boolean except for isRanked = {"population": Boolean, "sample": Boolean}.
-    console.log("here", questionId);
+    // console.log("here", questionId);
     const statsContainer = document.getElementById(questionId + "-stats-container");
     const questionTextP = document.getElementById(questionId + "-question-text");
     const itemId = "i" + (Math.floor(N_ITEMS * Math.random()));
@@ -61,7 +64,7 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
     const sampleRanking = ITEMS[itemId]["sampleRanking"];
     const populationRanking = ITEMS[itemId]["populationRanking"];
     const colors = shuffleList(COLORS); // Shuffle colors to avoid any correlations between groups and colors.
-    let userClass, questionText, targetDiversity = 75;
+    let userClass, questionText = "", targetDiversity = 75;
     let bothRanked = false;
     if (isRanked["population"] && isRanked["sample"]) {
 		statsContainer.classList.remove("stats-container-grid");
@@ -86,7 +89,7 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
 		} else {
 			drawUnrankedSet(questionId, [SAMPLE_SIZE], ["#ffffff"], "Sample", "#808080");
 		}
-        addOnClickEvents(questionId, "Sample", population, addToSample);
+        addOnClickEvents(questionId, population, addToSample);
         return;
 	}
     addDiversitySlider(questionId);
@@ -125,7 +128,7 @@ function shuffleList(x) { // Fischer-Yates shuffling algorithm.
 
 function addDiversitySlider(questionId) {
     const currentQuestion = document.getElementById(questionId + "-question-container");
-    console.log(questionId);
+    // console.log(questionId);
     const diversitySlideContainer = document.createElement("div");
     const submitButton = document.getElementById(questionId + "-submit-button");
     diversitySlideContainer.classList.add("diversity-slider-container");
@@ -158,9 +161,11 @@ function getMinEmptyPosition() {
 function addToSample(event) { // TODO Consider adding a number on top of each element in case the generated sample is ranked.
     const element = event.target;
     let minEmptyPosition = getMinEmptyPosition();
-    const sampleId = "Q-" + answeredQuestions + "Sample-0-" + minEmptyPosition;
+    // console.log(minEmptyPosition);
+    const sampleIdPrefix = "Q-" + answeredQuestions;
+    const sampleId = sampleIdPrefix + "-Sample-0-" + minEmptyPosition;
     const currentSampleElement = document.getElementById(sampleId);
-    let hasListener;
+    let hasListener, populationPrefix = sampleIdPrefix + "-Population-";
     // console.log(element, currentSampleElement);
     currentSampleElement.style.fill = element.style.fill;
     currentSampleElement.style.stroke = "white";
@@ -173,9 +178,13 @@ function addToSample(event) { // TODO Consider adding a number on top of each el
     currentSampleElement.style.cursor = "pointer";
     currentSampleElement.addEventListener("mouseup", removeFromSample);
     minEmptyPosition = getMinEmptyPosition();
+    // console.log(populationPrefix);
     if (minEmptyPosition === SAMPLE_SIZE) {
-		const allPopulationElements = document.querySelectorAll("[id^='Population-']");
+		const allPopulationElements = document.querySelectorAll("[id^='" + populationPrefix + "']");
 		for (const populationElement of allPopulationElements) {
+            // if (!populationElement.id.includes("Population")) {
+            //     continue;
+            // }
             hasListener = populationElement.getAttribute("data-listener") === "true";
 			if (hasListener) {
 				populationElement.removeEventListener("mouseup", addToSample);
@@ -189,7 +198,10 @@ function addToSample(event) { // TODO Consider adding a number on top of each el
 function removeFromSample(event) {
     const sampleElement = event.target;
     const populationElement = document.getElementById(chosenItems[sampleElement.id]);
-    const position = parseInt(sampleElement.id.substring(9, sampleElement.id.length));
+    const splitPopPrefix = sampleElement.id.split("-").filter(Boolean);
+    const populationPrefix = splitPopPrefix[0] + "-" + splitPopPrefix[1] + "-Population-";
+    const position = parseInt(sampleElement.id.split(/Q-\d+-Sample-0-/g)[1]);
+    // console.log("position:", position);
     let justEmptied = getMinEmptyPosition() === SAMPLE_SIZE;
     let hasListener;
     sampleElement.style.cursor = "auto";
@@ -203,9 +215,13 @@ function removeFromSample(event) {
     delete chosenItems[sampleElement.id];
     samplePositions[position] = false;
     minEmptyPosition = getMinEmptyPosition();
+    // console.log(populationPrefix);
     if (justEmptied) {
-        const allPopulationElements = document.querySelectorAll("[id^='Population-'");
+        const allPopulationElements = document.querySelectorAll("[id^='" + populationPrefix + "'");
         for (const popElement of allPopulationElements) {
+            // if (!popElement.id.includes("Population")) {
+            //     continue;
+            // }
             hasListener = Object.values(chosenItems).includes(popElement.id);
 			if (!hasListener) {
 				popElement.addEventListener("mouseup", addToSample);
@@ -252,7 +268,7 @@ function drawUnrankedSet(questionId, distribution, colors, label, borderColor="w
         for (let j = 0; j < distribution[i]; j++) {
             // console.log("drawUnrankedSet", i, j);
             particle = document.createElementNS(SVG_NS, "path");
-            particle.id = label + "-" + i + "-" + j;
+            particle.id = questionId + "-" + label + "-" + i + "-" + j;
             particle.style.stroke = borderColor;
             particle.style.strokeWidth = "0.4";
             particle.style.fill = colors[i];
@@ -299,7 +315,7 @@ function drawRankedList(questionId, distribution, ranking, colors, label, border
 	for (let i = 0; i < distribution.length; i++) {
 		for (j = 0; j < distribution[i]; j++) {
 			rect = document.createElementNS(SVG_NS, "rect");
-			rect.id = label + "-" + i + "-" + j;
+			rect.id = questionId + "-" + label + "-" + i + "-" + j;
 			rect.style.stroke = borderColor;
 			rect.style.strokeWidth = "0.4";
 			rect.style.fill = colors[ranking[currentX]];
@@ -386,7 +402,7 @@ function initializeQuestions() {
 		nextQuestion.id = nextQuestionId;
 		nextQuestion.classList.add("question-row-container");
 		if (i > 0) {
-			console.log("no-display");
+			// console.log("no-display");
 			nextQuestion.classList.add("no-display");
 			nextQuestion.classList.add("invisible");
 		}
@@ -408,7 +424,7 @@ function initializeQuestions() {
 			</div>`;
 		document.body.appendChild(nextQuestion);
 		// console.log(document.body.innerHTML);
-		generateQuestion(nextQuestionId, true, {"population": false, "sample": true}, true, true);
+		generateQuestion(nextQuestionId, (Math.random() < 0.5), {"population": (Math.random() < 0.5), "sample": (Math.random() < 0.5)}, (Math.random() < 0.5), (Math.random() < 0.5));
 		drawProgressCircle(nextQuestionId);
     }
 }

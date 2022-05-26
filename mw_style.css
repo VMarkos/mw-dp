@@ -92,6 +92,12 @@ body {
 	padding: 20px;
 }
 
+.stats-container-single {
+	display: flex;
+	justify-content: center;
+	padding: 20px;
+}
+
 .stats-border {
 	border: 2px dashed #808080;
 	background: #f0f0f0;
