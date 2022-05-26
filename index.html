@@ -10,28 +10,27 @@
     </head>
     <body>
 		<div id="qa" class="question-row-container">
-			<div class="progress-bar">
+			<!-- <div class="progress-bar">
 				<div id="progress-bar-left" class="progress-bar-left"></div>
 				<div id="progress-bar-right" class="progress-bar-right"></div>
-			</div>
-			<div class="question-container">
-				<h2>Question A</h2>
-				<p>How diverse would you consider the following <b>ranked</b> sample (right) drawn from the 
-					<b>unranked</b> population shown on the left?</p>
+			</div> -->
+			<div id="q-0" class="question-container">
+				<h2>Question</h2>
+				<p id="question-text"></p>
 				<div id="stats-border" class="stats-border">
 					<div id="all-stats-container" class="all-stats-container">
-						<div id="stats-container" class="stats-container">
+						<div id="stats-container" class="stats-container-grid">
 						</div>
 					</div>
 				</div>
-				<div class="diversity-slider-container">
+				<!-- <div class="diversity-slider-container">
 					<div class="diversity-slider-labels-container">
 						<div>Low</div>
 						<div>High</div>
 					</div>
 					<input type="range" id="diversity" min="0" max="100" value="50">
-				</div>
-				<div class="submit-button-container" onclick="proceedToNext('qa','qb')">
+				</div> -->
+				<div id="submit-button" class="submit-button-container" onclick="proceedToNext('qa','qb')">
 					Next
 				</div>
 			</div>

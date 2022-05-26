@@ -33,23 +33,59 @@ const SVG_DEFS = `<defs>
 </marker>
 </defs>`;
 
+const DIVERSITY_SLIDER = `<div class="diversity-slider-labels-container">
+<div>Low</div>
+<div>High</div>
+</div>
+<input type="range" id="diversity" min="0" max="100" value="50">`;
+
+const QUESTION_TEXTS = [
+    `How diverse would you consider the following <b>unranked</b> sample?`,
+    `How diverse would you consider the following <b>ranked</b> sample?`,
+    `How diverse would you consider the following <b>unranked</b> sample shown right, drawn from the 
+    <b>unranked</b> population shown left?`,
+    `How diverse would you consider the following <b>ranked</b> sample shown right, drawn from the 
+    <b>unranked</b> population shown left?`,
+    `How diverse would you consider the following <b>unranked</b> sample shown right, drawn from the 
+    <b>ranked</b> population shown left?`,
+    `How diverse would you consider the following <b>ranked</b> sample shown right, drawn from the 
+    <b>unranked</b> population shown left?`,
+    `Construct a `,
+];
+
+const chosenItems = {} // Maps sample entries ids to population ids.
+
 const N_ITEMS = Object.keys(ITEMS).length;
 
-let sampleCurrentPosition = 0;
+const samplePositions = new Array(SAMPLE_SIZE);
+for (let i = 0; i < SAMPLE_SIZE; i++) {
+    samplePositions[i] = false;
+}
 
 function generateQuestion(knownPopulation, isRanked, isUserIn, isObserved) { // All boolean except for isRanked = {"population": Boolean, "sample": Boolean}.
     const statsContainer = document.getElementById("stats-container");
+    const questionTextP = document.getElementById("question-text");
     const itemId = "i" + (Math.floor(N_ITEMS * Math.random()));
     const population = ITEMS[itemId]["population"];
     const sample = ITEMS[itemId]["sample"];
     const sampleRanking = ITEMS[itemId]["sampleRanking"];
     const populationRanking = ITEMS[itemId]["populationRanking"];
     const colors = shuffleList(COLORS); // Shuffle colors to avoid any correlations between groups and colors.
-    let userClass;
+    let userClass, questionText, targetDiversity = 75;
+    let bothRanked = false;
     if (isRanked["population"] && isRanked["sample"]) {
-		statsContainer.style.flexDirection = "column";
+		statsContainer.classList.remove("stats-container-grid");
+        statsContainer.classList.add("stats-container-flex");
+        bothRanked = true;
 	}
 	if (!isObserved) {
+        if (isUserIn) {
+            questionText = "Assume you belong to the class shown below. ";
+            userClass = Math.floor(population.length * Math.random());
+            addUserClass(colors[userClass]);
+        }
+        questionText += `Construct a${isRanked["sample"] ? " <b>ranked</b>" : "n <b>unranked</b>"} sample which is ${targetDiversity}% diverse given the ${isRanked["population"] ? "<b>ranked</b>" : "<b>unranked</b>"} population shown left.`
+        questionTextP.innerHTML = questionText;
         if (isRanked["population"]) {
             drawRankedList(population, populationRanking, colors, "Population");
         } else {
@@ -58,15 +94,19 @@ function generateQuestion(knownPopulation, isRanked, isUserIn, isObserved) { // 
 		if (isRanked["sample"]) {
 			drawRankedList([SAMPLE_SIZE], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ["#ffffff"], "Sample", "#808080");
 		} else {
-			drawUnrankedSet([SAMPLE_SIZE], ["#ffffff"], "Population", "#808080");
+			drawUnrankedSet([SAMPLE_SIZE], ["#ffffff"], "Sample", "#808080");
 		}
         addOnClickEvents("Sample", population, addToSample);
         return;
 	}
+    addDiversitySlider();
     if (isUserIn) {
+        questionText = "Assume you belong to the class shown below. ";
         userClass = Math.floor(population.length * Math.random());
         addUserClass(colors[userClass]);
     }
+    questionText += `How diverse would you consider the following ${isRanked["sample"] ? "<b>ranked</b>" : "<b>unranked</b>"} sample${knownPopulation ? ` shown ${bothRanked ? "at the bottom" : "right"} and drawn from the ${isRanked["population"] ? "<b>ranked</b>" : "<b>unranked</b>"} population shown ${bothRanked ? "at the top" : "left"}` : ""}?`;
+    questionTextP.innerHTML = questionText;
     if (knownPopulation) {
         if (isRanked["population"]) {
             drawRankedList(population, populationRanking, colors, "Population");
@@ -93,13 +133,22 @@ function shuffleList(x) { // Fischer-Yates shuffling algorithm.
     return shuffled;
 }
 
+function addDiversitySlider() {
+    const currentQuestion = document.getElementById("q-0");
+    const diversitySlideContainer = document.createElement("div");
+    const submitButton = document.getElementById("submit-button");
+    diversitySlideContainer.classList.add("diversity-slider-container");
+    diversitySlideContainer.innerHTML = DIVERSITY_SLIDER;
+    currentQuestion.insertBefore(diversitySlideContainer, submitButton);
+}
+
 function addOnClickEvents(label, distribution, eventHandler) { // TODO Revise this! (You were here)
 	let element;
     // console.log("addOnClickEvents", distribution);
 	for (let i = 0; i < distribution.length; i++) {
 		for (let j = 0; j < distribution[i]; j++) {
 			element = document.getElementById("Population" + "-" + i + "-" + j);
-            console.log(element.id, eventHandler);
+            // console.log(element.id, eventHandler);
             element.style.cursor = "pointer";
 			element.addEventListener("mouseup", eventHandler);
 			element.setAttribute("data-listener", true);
@@ -107,29 +156,78 @@ function addOnClickEvents(label, distribution, eventHandler) { // TODO Revise th
 	}
 }
 
+function getMinEmptyPosition() {
+    let i = 0;
+    while (i < SAMPLE_SIZE && samplePositions[i]) {
+        i++;
+    }
+    return i;
+}
+
 function addToSample(event) { // TODO Consider adding a number on top of each element in case the generated sample is ranked.
     const element = event.target;
-    const currentSampleElement = document.getElementById("Sample-0-" + sampleCurrentPosition);
+    let minEmptyPosition = getMinEmptyPosition();
+    const sampleId = "Sample-0-" + minEmptyPosition;
+    const currentSampleElement = document.getElementById(sampleId);
+    let hasListener;
     // console.log(element, currentSampleElement);
     currentSampleElement.style.fill = element.style.fill;
     currentSampleElement.style.stroke = "white";
     element.style.fillOpacity = "0.5";
     element.removeEventListener("mouseup", addToSample);
     element.setAttribute("data-listener", false);
-    sampleCurrentPosition++;
-    if (sampleCurrentPosition === SAMPLE_SIZE) {
+    element.style.cursor = "auto";
+    chosenItems[sampleId] = element.id;
+    samplePositions[minEmptyPosition] = true;
+    currentSampleElement.style.cursor = "pointer";
+    currentSampleElement.addEventListener("mouseup", removeFromSample);
+    minEmptyPosition = getMinEmptyPosition();
+    if (minEmptyPosition === SAMPLE_SIZE) {
 		const allPopulationElements = document.querySelectorAll("[id^='Population-']");
 		for (const populationElement of allPopulationElements) {
-			if (populationElement.getAttribute("data-listener")) {
+            hasListener = populationElement.getAttribute("data-listener") === "true";
+			if (hasListener) {
 				populationElement.removeEventListener("mouseup", addToSample);
-				populationElement.setAttribute("data-listener", false);
+                populationElement.setAttribute("data-listener", false);
+                populationElement.style.cursor = "auto";
 			}
 		}
 	}
 }
 
+function removeFromSample(event) {
+    const sampleElement = event.target;
+    const populationElement = document.getElementById(chosenItems[sampleElement.id]);
+    const position = parseInt(sampleElement.id.substring(9, sampleElement.id.length));
+    let justEmptied = getMinEmptyPosition() === SAMPLE_SIZE;
+    let hasListener;
+    sampleElement.style.cursor = "auto";
+    sampleElement.style.fill = "#ffffff";
+    sampleElement.style.stroke = "#808080";
+    sampleElement.removeEventListener("mouseup", removeFromSample);
+    populationElement.style.cursor = "pointer";
+    populationElement.style.fillOpacity = "1.0";
+    populationElement.addEventListener("mouseup", addToSample);
+    populationElement.setAttribute("data-listener", true);
+    delete chosenItems[sampleElement.id];
+    samplePositions[position] = false;
+    minEmptyPosition = getMinEmptyPosition();
+    if (justEmptied) {
+        const allPopulationElements = document.querySelectorAll("[id^='Population-'");
+        for (const popElement of allPopulationElements) {
+            hasListener = Object.values(chosenItems).includes(popElement.id);
+			if (!hasListener) {
+				popElement.addEventListener("mouseup", addToSample);
+                popElement.setAttribute("data-listener", true);
+                popElement.style.cursor = "pointer";
+			}
+        }
+    }
+}
+
 function addUserClass(classColor) {
     const statsContainer = document.getElementById("all-stats-container");
+    // console.log(statsContainer);
     const userClassContainer = document.createElement("div");
     const userClassText = document.createElement("div");
     const userClassBullet = document.createElement("div");
@@ -254,16 +352,15 @@ function drawRankedList(distribution, ranking, colors, label, borderColor="white
     container.appendChild(lastLabel);
     container.appendChild(overallLabel);
     statsContainer.appendChild(container);
-
 }
 
-function initializeQuestions(n=20) {
+function initializeQuestions(n = 20) {
     for (let i = 0; i < n; i++) {
         return;
     }
 }
 
-generateQuestion(true, {"population": true, "sample": true}, true, false);
+generateQuestion(true, {"population": false, "sample": true}, true, true);
 
 /*
 In terms of display, you have the following types of questions:
