@@ -12,7 +12,8 @@ function nextQuestion(previous, next) {
 }
 
 function proceedToNext() {
-	const previous = document.getElementById("q-" + answeredQuestions);
-	const next = document.getElementById("q-" + (answeredQuestions + 1));
+	const previous = document.getElementById("Q-" + answeredQuestions);
+	answeredQuestions++;
+	const next = document.getElementById("Q-" + answeredQuestions);
 	nextQuestion(previous, next);
 }

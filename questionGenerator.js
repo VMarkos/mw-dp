@@ -1,7 +1,7 @@
 const XMLNS = "http://www.w3.org/2000/svg";
 const SVG_NS = "http://www.w3.org/2000/svg";
 const SAMPLE_SIZE = 12;
-const TOTAL_QUESTIONS = 1;
+const TOTAL_QUESTIONS = 10;
 
 const ITEMS = {
     "i0": {
@@ -51,10 +51,10 @@ for (let i = 0; i < SAMPLE_SIZE; i++) {
 
 let answeredQuestions = 0;
 
-function generateQuestion(knownPopulation, isRanked, isUserIn, isObserved) { // All boolean except for isRanked = {"population": Boolean, "sample": Boolean}.
-    console.log("here");
-    const statsContainer = document.getElementById("stats-container");
-    const questionTextP = document.getElementById("question-text");
+function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObserved) { // All boolean except for isRanked = {"population": Boolean, "sample": Boolean}.
+    console.log("here", questionId);
+    const statsContainer = document.getElementById(questionId + "-stats-container");
+    const questionTextP = document.getElementById(questionId + "-question-text");
     const itemId = "i" + (Math.floor(N_ITEMS * Math.random()));
     const population = ITEMS[itemId]["population"];
     const sample = ITEMS[itemId]["sample"];
@@ -72,42 +72,42 @@ function generateQuestion(knownPopulation, isRanked, isUserIn, isObserved) { // 
         if (isUserIn) {
             questionText = "Assume you belong to the class shown below. ";
             userClass = Math.floor(population.length * Math.random());
-            addUserClass(colors[userClass]);
+            addUserClass(questionId, colors[userClass]);
         }
         questionText += `Construct a${isRanked["sample"] ? " <b>ranked</b>" : "n <b>unranked</b>"} sample which is ${targetDiversity}% diverse given the ${isRanked["population"] ? "<b>ranked</b>" : "<b>unranked</b>"} population shown left.`
         questionTextP.innerHTML = questionText;
         if (isRanked["population"]) {
-            drawRankedList(population, populationRanking, colors, "Population");
+            drawRankedList(questionId, population, populationRanking, colors, "Population");
         } else {
-            drawUnrankedSet(population, colors, "Population");
+            drawUnrankedSet(questionId, population, colors, "Population");
         }
 		if (isRanked["sample"]) {
-			drawRankedList([SAMPLE_SIZE], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ["#ffffff"], "Sample", "#808080");
+			drawRankedList(questionId, [SAMPLE_SIZE], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ["#ffffff"], "Sample", "#808080");
 		} else {
-			drawUnrankedSet([SAMPLE_SIZE], ["#ffffff"], "Sample", "#808080");
+			drawUnrankedSet(questionId, [SAMPLE_SIZE], ["#ffffff"], "Sample", "#808080");
 		}
-        addOnClickEvents("Sample", population, addToSample);
+        addOnClickEvents(questionId, "Sample", population, addToSample);
         return;
 	}
-    addDiversitySlider();
+    addDiversitySlider(questionId);
     if (isUserIn) {
         questionText = "Assume you belong to the class shown below. ";
         userClass = Math.floor(population.length * Math.random());
-        addUserClass(colors[userClass]);
+        addUserClass(questionId, colors[userClass]);
     }
     questionText += `How diverse would you consider the following ${isRanked["sample"] ? "<b>ranked</b>" : "<b>unranked</b>"} sample${knownPopulation ? ` ${bothRanked ? "(bottom)" : "(right)"} and drawn from the ${isRanked["population"] ? "<b>ranked</b>" : "<b>unranked</b>"} population ${bothRanked ? "(top)" : "(left)"}` : ""}?`;
     questionTextP.innerHTML = questionText;
     if (knownPopulation) {
         if (isRanked["population"]) {
-            drawRankedList(population, populationRanking, colors, "Population");
+            drawRankedList(questionId, population, populationRanking, colors, "Population");
         } else {
-            drawUnrankedSet(population, colors, "Population");
+            drawUnrankedSet(questionId, population, colors, "Population");
         }
     }
 	if (isRanked["sample"]){
-		drawRankedList(sample, sampleRanking, colors, "Sample");
+		drawRankedList(questionId, sample, sampleRanking, colors, "Sample");
 	} else {
-		drawUnrankedSet(sample, colors, "Sample");
+		drawUnrankedSet(questionId, sample, colors, "Sample");
 	}
 }
 
@@ -123,21 +123,22 @@ function shuffleList(x) { // Fischer-Yates shuffling algorithm.
     return shuffled;
 }
 
-function addDiversitySlider() {
-    const currentQuestion = document.getElementById("q-" + answeredQuestions);
+function addDiversitySlider(questionId) {
+    const currentQuestion = document.getElementById(questionId + "-question-container");
+    console.log(questionId);
     const diversitySlideContainer = document.createElement("div");
-    const submitButton = document.getElementById("submit-button");
+    const submitButton = document.getElementById(questionId + "-submit-button");
     diversitySlideContainer.classList.add("diversity-slider-container");
     diversitySlideContainer.innerHTML = DIVERSITY_SLIDER;
     currentQuestion.insertBefore(diversitySlideContainer, submitButton);
 }
 
-function addOnClickEvents(label, distribution, eventHandler) { // TODO Revise this! (You were here)
+function addOnClickEvents(questionId, distribution, eventHandler) { // TODO Revise this! (You were here)
 	let element;
     // console.log("addOnClickEvents", distribution);
 	for (let i = 0; i < distribution.length; i++) {
 		for (let j = 0; j < distribution[i]; j++) {
-			element = document.getElementById("Population" + "-" + i + "-" + j);
+			element = document.getElementById(questionId + "-Population" + "-" + i + "-" + j);
             // console.log(element.id, eventHandler);
             element.style.cursor = "pointer";
 			element.addEventListener("mouseup", eventHandler);
@@ -157,7 +158,7 @@ function getMinEmptyPosition() {
 function addToSample(event) { // TODO Consider adding a number on top of each element in case the generated sample is ranked.
     const element = event.target;
     let minEmptyPosition = getMinEmptyPosition();
-    const sampleId = "Sample-0-" + minEmptyPosition;
+    const sampleId = "Q-" + answeredQuestions + "Sample-0-" + minEmptyPosition;
     const currentSampleElement = document.getElementById(sampleId);
     let hasListener;
     // console.log(element, currentSampleElement);
@@ -215,8 +216,8 @@ function removeFromSample(event) {
     }
 }
 
-function addUserClass(classColor) {
-    const statsContainer = document.getElementById("all-stats-container");
+function addUserClass(questionId, classColor) {
+    const statsContainer = document.getElementById(questionId + "-all-stats-container");
     // console.log(statsContainer);
     const userClassContainer = document.createElement("div");
     const userClassText = document.createElement("div");
@@ -232,10 +233,10 @@ function addUserClass(classColor) {
     statsContainer.prepend(userClassContainer);
 }
 
-function drawUnrankedSet(distribution, colors, label, borderColor="white") {
+function drawUnrankedSet(questionId, distribution, colors, label, borderColor="white") {
     const VIEWBOX_WIDTH = 200;
     const VIEWBOX_HEIGHT = 200;
-    const statsContainer = document.getElementById("stats-container");
+    const statsContainer = document.getElementById(questionId + "-stats-container");
     const container = document.createElementNS(SVG_NS, "svg");
     container.setAttribute("xmlns", XMLNS);
     container.setAttribute("viewBox", "0 0 " + VIEWBOX_WIDTH + " " + VIEWBOX_HEIGHT);
@@ -283,10 +284,10 @@ function drawUnrankedSet(distribution, colors, label, borderColor="white") {
     statsContainer.appendChild(container);
 }
 
-function drawRankedList(distribution, ranking, colors, label, borderColor="white") {
+function drawRankedList(questionId, distribution, ranking, colors, label, borderColor="white") {
     const VIEWBOX_WIDTH = 200;
     const VIEWBOX_HEIGHT = 100;
-    const statsContainer = document.getElementById("stats-container");
+    const statsContainer = document.getElementById(questionId + "-stats-container");
     const container = document.createElementNS(SVG_NS, "svg");
     container.setAttribute("xmlns", XMLNS);
     container.setAttribute("viewBox", "0 0 " + VIEWBOX_WIDTH + " " + VIEWBOX_HEIGHT);
@@ -344,18 +345,19 @@ function drawRankedList(distribution, ranking, colors, label, borderColor="white
     statsContainer.appendChild(container);
 }
 
-function drawProgressCircle() {
-	const progress = parseInt(100 * answeredQuestions / TOTAL_QUESTIONS);
-	const progressContainer = document.getElementById("progress-circle");
+function drawProgressCircle(questionId) {
+	const qNum = questionId.substring(2, questionId.length);
+	const progress = parseInt(100 * qNum / TOTAL_QUESTIONS);
+	const progressContainer = document.getElementById(questionId + "-progress-circle");
 	const container = document.createElementNS(SVG_NS, "svg");
 	container.setAttribute("xmlns", XMLNS);
     container.setAttribute("viewBox", "0 0 100 100");
     const progressCircle = document.createElementNS(SVG_NS, "path");
     const cx = 50, cy = 50, R = 46, deltaTheta = 2 * Math.PI / TOTAL_QUESTIONS, phi = - Math.PI / 2;
-    const xEnd = cx + R * Math.cos(answeredQuestions * deltaTheta + phi);
-    const yEnd = cy + R * Math.sin(answeredQuestions * deltaTheta + phi);
+    const xEnd = cx + R * Math.cos(qNum * deltaTheta + phi);
+    const yEnd = cy + R * Math.sin(qNum * deltaTheta + phi);
     let largeArc = 0;
-    if (answeredQuestions > TOTAL_QUESTIONS / 2) {
+    if (qNum > TOTAL_QUESTIONS / 2) {
 		largeArc = 1;
 	}
     const d = "M " + cx + " 4 A " + R + " " + R + " 0 " + largeArc + " 1 " + xEnd + " " + yEnd;
@@ -377,31 +379,37 @@ function drawProgressCircle() {
 }
 
 function initializeQuestions() {
-	let nextQuestion;
+	let nextQuestion, nextQuestionId;
     for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+		nextQuestionId = "Q-" + i;
 		nextQuestion = document.createElement("div");
-		nextQuestion.id = "Q-" + i;
+		nextQuestion.id = nextQuestionId;
 		nextQuestion.classList.add("question-row-container");
-		nextQuestion.innerHTML = `<div id="q-${i}" class="question-container">
+		if (i > 0) {
+			console.log("no-display");
+			nextQuestion.classList.add("no-display");
+			nextQuestion.classList.add("invisible");
+		}
+		nextQuestion.innerHTML = `<div id="Q-${i}-question-container" class="question-container">
 				<div class="question-header-container">
 					<h2>Question</h2>
-					<div id="progress-circle" class="progress-circle"></div>
+					<div id="Q-${i}-progress-circle" class="progress-circle"></div>
 				</div>
-				<p id="question-text"></p>
-				<div id="stats-border" class="stats-border">
-					<div id="all-stats-container" class="all-stats-container">
-						<div id="stats-container" class="stats-container-grid">
+				<p id="Q-${i}-question-text"></p>
+				<div id="Q-${i}-stats-border" class="stats-border">
+					<div id="Q-${i}-all-stats-container" class="all-stats-container">
+						<div id="Q-${i}-stats-container" class="stats-container-grid">
 						</div>
 					</div>
 				</div>
-				<div id="submit-button" class="submit-button-container" onclick="proceedToNext()">
+				<div id="Q-${i}-submit-button" class="submit-button-container" onclick="proceedToNext()">
 					Next
 				</div>
 			</div>`;
 		document.body.appendChild(nextQuestion);
 		// console.log(document.body.innerHTML);
-		setTimeout(() => {generateQuestion(true, {"population": false, "sample": true}, true, true);}, 1000);
-		drawProgressCircle();
+		generateQuestion(nextQuestionId, true, {"population": false, "sample": true}, true, true);
+		drawProgressCircle(nextQuestionId);
     }
 }
 
