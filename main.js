@@ -1,10 +1,3 @@
-function animateProgressBar() {
-	const leftBar = document.getElementById("progress-bar-left");
-	const rightBar = document.getElementById("progress-bar-right");
-	leftBar.style.width = "80%";
-	rightBar.style.width = "20%";	
-}
-
 function nextQuestion(previous, next) {
 	// previous.style.scale = "0%";
 	previous.classList.add("invisible");
@@ -18,8 +11,8 @@ function nextQuestion(previous, next) {
 	}, 500);
 }
 
-function proceedToNext(id1, id2) {
-	const previous = document.getElementById(id1);
-	const next = document.getElementById(id2);
+function proceedToNext() {
+	const previous = document.getElementById("q-" + answeredQuestions);
+	const next = document.getElementById("q-" + (answeredQuestions + 1));
 	nextQuestion(previous, next);
 }

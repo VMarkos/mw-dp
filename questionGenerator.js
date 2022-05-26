@@ -1,6 +1,7 @@
 const XMLNS = "http://www.w3.org/2000/svg";
 const SVG_NS = "http://www.w3.org/2000/svg";
 const SAMPLE_SIZE = 12;
+const TOTAL_QUESTIONS = 1;
 
 const ITEMS = {
     "i0": {
@@ -39,20 +40,6 @@ const DIVERSITY_SLIDER = `<div class="diversity-slider-labels-container">
 </div>
 <input type="range" id="diversity" min="0" max="100" value="50">`;
 
-const QUESTION_TEXTS = [
-    `How diverse would you consider the following <b>unranked</b> sample?`,
-    `How diverse would you consider the following <b>ranked</b> sample?`,
-    `How diverse would you consider the following <b>unranked</b> sample shown right, drawn from the 
-    <b>unranked</b> population shown left?`,
-    `How diverse would you consider the following <b>ranked</b> sample shown right, drawn from the 
-    <b>unranked</b> population shown left?`,
-    `How diverse would you consider the following <b>unranked</b> sample shown right, drawn from the 
-    <b>ranked</b> population shown left?`,
-    `How diverse would you consider the following <b>ranked</b> sample shown right, drawn from the 
-    <b>unranked</b> population shown left?`,
-    `Construct a `,
-];
-
 const chosenItems = {} // Maps sample entries ids to population ids.
 
 const N_ITEMS = Object.keys(ITEMS).length;
@@ -62,7 +49,10 @@ for (let i = 0; i < SAMPLE_SIZE; i++) {
     samplePositions[i] = false;
 }
 
+let answeredQuestions = 0;
+
 function generateQuestion(knownPopulation, isRanked, isUserIn, isObserved) { // All boolean except for isRanked = {"population": Boolean, "sample": Boolean}.
+    console.log("here");
     const statsContainer = document.getElementById("stats-container");
     const questionTextP = document.getElementById("question-text");
     const itemId = "i" + (Math.floor(N_ITEMS * Math.random()));
@@ -105,7 +95,7 @@ function generateQuestion(knownPopulation, isRanked, isUserIn, isObserved) { // 
         userClass = Math.floor(population.length * Math.random());
         addUserClass(colors[userClass]);
     }
-    questionText += `How diverse would you consider the following ${isRanked["sample"] ? "<b>ranked</b>" : "<b>unranked</b>"} sample${knownPopulation ? ` shown ${bothRanked ? "at the bottom" : "right"} and drawn from the ${isRanked["population"] ? "<b>ranked</b>" : "<b>unranked</b>"} population shown ${bothRanked ? "at the top" : "left"}` : ""}?`;
+    questionText += `How diverse would you consider the following ${isRanked["sample"] ? "<b>ranked</b>" : "<b>unranked</b>"} sample${knownPopulation ? ` ${bothRanked ? "(bottom)" : "(right)"} and drawn from the ${isRanked["population"] ? "<b>ranked</b>" : "<b>unranked</b>"} population ${bothRanked ? "(top)" : "(left)"}` : ""}?`;
     questionTextP.innerHTML = questionText;
     if (knownPopulation) {
         if (isRanked["population"]) {
@@ -134,7 +124,7 @@ function shuffleList(x) { // Fischer-Yates shuffling algorithm.
 }
 
 function addDiversitySlider() {
-    const currentQuestion = document.getElementById("q-0");
+    const currentQuestion = document.getElementById("q-" + answeredQuestions);
     const diversitySlideContainer = document.createElement("div");
     const submitButton = document.getElementById("submit-button");
     diversitySlideContainer.classList.add("diversity-slider-container");
@@ -354,13 +344,68 @@ function drawRankedList(distribution, ranking, colors, label, borderColor="white
     statsContainer.appendChild(container);
 }
 
-function initializeQuestions(n = 20) {
-    for (let i = 0; i < n; i++) {
-        return;
+function drawProgressCircle() {
+	const progress = parseInt(100 * answeredQuestions / TOTAL_QUESTIONS);
+	const progressContainer = document.getElementById("progress-circle");
+	const container = document.createElementNS(SVG_NS, "svg");
+	container.setAttribute("xmlns", XMLNS);
+    container.setAttribute("viewBox", "0 0 100 100");
+    const progressCircle = document.createElementNS(SVG_NS, "path");
+    const cx = 50, cy = 50, R = 46, deltaTheta = 2 * Math.PI / TOTAL_QUESTIONS, phi = - Math.PI / 2;
+    const xEnd = cx + R * Math.cos(answeredQuestions * deltaTheta + phi);
+    const yEnd = cy + R * Math.sin(answeredQuestions * deltaTheta + phi);
+    let largeArc = 0;
+    if (answeredQuestions > TOTAL_QUESTIONS / 2) {
+		largeArc = 1;
+	}
+    const d = "M " + cx + " 4 A " + R + " " + R + " 0 " + largeArc + " 1 " + xEnd + " " + yEnd;
+    progressCircle.setAttribute("d", d);
+    progressCircle.style.stroke = "rgb(33, 85, 205)";
+    progressCircle.style.strokeWidth = "8";
+    progressCircle.style.fill = "none";
+    const progressLabel = document.createElementNS(SVG_NS, "text");
+    progressLabel.setAttribute("x", cx);
+    progressLabel.setAttribute("y", cy);
+    const progressLabelText = document.createTextNode(progress + "%");
+    progressLabel.setAttribute("text-anchor", "middle");
+    progressLabel.setAttribute("dominant-baseline", "middle");
+    progressLabel.appendChild(progressLabelText);
+    progressLabel.setAttribute("font-size", "32");
+    container.appendChild(progressLabel);
+    container.appendChild(progressCircle);
+    progressContainer.appendChild(container);
+}
+
+function initializeQuestions() {
+	let nextQuestion;
+    for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+		nextQuestion = document.createElement("div");
+		nextQuestion.id = "Q-" + i;
+		nextQuestion.classList.add("question-row-container");
+		nextQuestion.innerHTML = `<div id="q-${i}" class="question-container">
+				<div class="question-header-container">
+					<h2>Question</h2>
+					<div id="progress-circle" class="progress-circle"></div>
+				</div>
+				<p id="question-text"></p>
+				<div id="stats-border" class="stats-border">
+					<div id="all-stats-container" class="all-stats-container">
+						<div id="stats-container" class="stats-container-grid">
+						</div>
+					</div>
+				</div>
+				<div id="submit-button" class="submit-button-container" onclick="proceedToNext()">
+					Next
+				</div>
+			</div>`;
+		document.body.appendChild(nextQuestion);
+		// console.log(document.body.innerHTML);
+		setTimeout(() => {generateQuestion(true, {"population": false, "sample": true}, true, true);}, 1000);
+		drawProgressCircle();
     }
 }
 
-generateQuestion(true, {"population": false, "sample": true}, true, true);
+window.addEventListener("load", function() {initializeQuestions();});
 
 /*
 In terms of display, you have the following types of questions:
@@ -372,5 +417,3 @@ In terms of display, you have the following types of questions:
     6. Questions displaying population as well as the user's class and asking them to create a sample with given diversity;
     7. Questions displaying only class colors and asking users to create a sample of a given diversity.
 */
-
-// TODO Consider changing layout depending on variables' assignment (like, when we have at least one circle prefer a horizontal layout instead of a vertical one etc).
