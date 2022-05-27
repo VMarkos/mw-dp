@@ -58,6 +58,7 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
     // console.log("here", questionId);
     const statsContainer = document.getElementById(questionId + "-stats-container");
     const questionTextP = document.getElementById(questionId + "-question-text");
+    const questionGridContainer = document.getElementById(questionId + "-question-grid-container");
     const itemId = "i" + (Math.floor(N_ITEMS * Math.random()));
     const population = ITEMS[itemId]["population"];
     const sample = ITEMS[itemId]["sample"];
@@ -66,11 +67,15 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
     const colors = shuffleList(COLORS); // Shuffle colors to avoid any correlations between groups and colors.
     let userClass, questionText = "", targetDiversity = 75;
     let bothRanked = false;
-    if (isRanked["population"] && isRanked["sample"]) {
-		statsContainer.classList.remove("stats-container-grid");
-        statsContainer.classList.add("stats-container-flex");
-        bothRanked = true;
-	}
+    if (!knownPopulation && isObserved && !isUserIn) {
+		questionGridContainer.removeChild(document.getElementById(questionId + "-question-text"));
+		questionGridContainer.removeChild(document.getElementById(questionId + "-stats-border"));
+	} 
+	// else if (isRanked["population"] && isRanked["sample"]) {
+	//	statsContainer.classList.remove("stats-container-grid");
+    //    statsContainer.classList.add("stats-container-flex");
+    //    bothRanked = true;
+	// }
 	if (!isObserved) {
         if (isUserIn) {
             questionText = "Assume you belong to the class shown below. ";
@@ -80,7 +85,7 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
         questionText += `Construct a${isRanked["sample"] ? " <b>ranked</b>" : "n <b>unranked</b>"} sample which is ${targetDiversity}% diverse given the ${isRanked["population"] ? "<b>ranked</b>" : "<b>unranked</b>"} population shown left.`
         questionTextP.innerHTML = questionText;
         if (isRanked["population"]) {
-            drawRankedList(questionId, "sample", population, populationRanking, colors, "Population");
+            drawRankedList(questionId, "population", population, populationRanking, colors, "Population");
         } else {
             drawUnrankedSet(questionId, "population", population, colors, "Population");
         }
@@ -395,7 +400,7 @@ function drawProgressCircle(questionId) {
     progressContainer.appendChild(container);
 }
 
-function initializeQuestions() {
+function initializeQuestions() { // TODO It remains to fix the context/question DIVs, add descriptions etc.
 	let nextQuestion, nextQuestionId;
     for (let i = 0; i < TOTAL_QUESTIONS; i++) {
 		nextQuestionId = "Q-" + i;
@@ -412,7 +417,7 @@ function initializeQuestions() {
 					<h2>Question</h2>
 					<div id="Q-${i}-progress-circle" class="progress-circle"></div>
 				</div>
-                <div class="question-grid-container">
+                <div id="Q-${i}-question-grid-container" class="question-grid-container">
                     <p id="Q-${i}-question-text"></p>
                     <div id="Q-${i}-stats-border" class="stats-border">
                         <div id="Q-${i}-all-stats-container" class="all-stats-container">

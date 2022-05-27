@@ -102,7 +102,6 @@ body {
 .stats-container-single {
 	display: flex;
 	justify-content: center;
-	padding: 20px;
 }
 
 .stats-border {
