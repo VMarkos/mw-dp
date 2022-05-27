@@ -58,6 +58,7 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
     // console.log("here", questionId);
     const statsContainer = document.getElementById(questionId + "-stats-container");
     const questionTextP = document.getElementById(questionId + "-question-text");
+    const contextTextP = document.getElementById(questionId + "-context-text");
     const questionGridContainer = document.getElementById(questionId + "-question-grid-container");
     const itemId = "i" + (Math.floor(N_ITEMS * Math.random()));
     const population = ITEMS[itemId]["population"];
@@ -65,10 +66,10 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
     const sampleRanking = ITEMS[itemId]["sampleRanking"];
     const populationRanking = ITEMS[itemId]["populationRanking"];
     const colors = shuffleList(COLORS); // Shuffle colors to avoid any correlations between groups and colors.
-    let userClass, questionText = "", targetDiversity = 75;
+    let userClass, questionText = "", contextText = "";
     let bothRanked = false;
     if (!knownPopulation && isObserved && !isUserIn) {
-		questionGridContainer.removeChild(document.getElementById(questionId + "-question-text"));
+		questionGridContainer.removeChild(document.getElementById(questionId + "-context-text"));
 		questionGridContainer.removeChild(document.getElementById(questionId + "-stats-border"));
 	} 
 	// else if (isRanked["population"] && isRanked["sample"]) {
@@ -78,11 +79,13 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
 	// }
 	if (!isObserved) {
         if (isUserIn) {
-            questionText = "Assume you belong to the class shown below. ";
+            contextText += "Assume you belong to the class shown right. ";
             userClass = Math.floor(population.length * Math.random());
             addUserClass(questionId, colors[userClass]);
         }
-        questionText += `Construct a${isRanked["sample"] ? " <b>ranked</b>" : "n <b>unranked</b>"} sample which is ${targetDiversity}% diverse given the ${isRanked["population"] ? "<b>ranked</b>" : "<b>unranked</b>"} population shown left.`
+        contextText += `${isUserIn ? "Then, g" : "G"}iven the ${isRanked["population"] ? "<b>ranked</b>" : "<b>unranked</b>"} population, ${isUserIn ? "also ": ""}shown right...`;
+        contextTextP.innerHTML = contextText;
+        questionText += `...construct a${isRanked["sample"] ? " <b>ranked</b>" : "n <b>unranked</b>"} sample which is <b>as diverse as possible</b>.`
         questionTextP.innerHTML = questionText;
         if (isRanked["population"]) {
             drawRankedList(questionId, "population", population, populationRanking, colors, "Population");
@@ -99,19 +102,21 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
 	}
     addDiversitySlider(questionId);
     if (isUserIn) {
-        questionText = "Assume you belong to the class shown below. ";
+        contextText += "Assume you belong to the class shown right. ";
         userClass = Math.floor(population.length * Math.random());
         addUserClass(questionId, colors[userClass]);
     }
-    questionText += `How diverse would you consider the following ${isRanked["sample"] ? "<b>ranked</b>" : "<b>unranked</b>"} sample${knownPopulation ? ` ${bothRanked ? "(bottom)" : "(right)"} and drawn from the ${isRanked["population"] ? "<b>ranked</b>" : "<b>unranked</b>"} population ${bothRanked ? "(top)" : "(left)"}` : ""}?`;
+    questionText += `${knownPopulation ? "...h" : "H"}ow diverse would you consider the ${isRanked["sample"] ? "<b>ranked</b>" : "<b>unranked</b>"} sample shown right to be?`;
     questionTextP.innerHTML = questionText;
     if (knownPopulation) {
+        contextText += `${isUserIn ? "Then, g" : "G"}iven the ${isRanked["population"] ? "<b>ranked</b>" : "<b>unranked</b>"} population, ${isUserIn ? "also ": ""}shown right...`;
         if (isRanked["population"]) {
-            drawRankedList(questionId, "sample", population, populationRanking, colors, "Population");
+            drawRankedList(questionId, "population", population, populationRanking, colors, "Population");
         } else {
             drawUnrankedSet(questionId, "population", population, colors, "Population");
         }
     }
+    contextTextP.innerHTML = contextText;
 	if (isRanked["sample"]){
 		drawRankedList(questionId, "sample", sample, sampleRanking, colors, "Sample");
 	} else {
@@ -418,14 +423,14 @@ function initializeQuestions() { // TODO It remains to fix the context/question 
 					<div id="Q-${i}-progress-circle" class="progress-circle"></div>
 				</div>
                 <div id="Q-${i}-question-grid-container" class="question-grid-container">
-                    <p id="Q-${i}-question-text"></p>
+                    <p id="Q-${i}-context-text"></p>
                     <div id="Q-${i}-stats-border" class="stats-border">
                         <div id="Q-${i}-all-stats-container" class="all-stats-container">
                             <div id="Q-${i}-population-stats-container" class="stats-container-single">
                             </div>
                         </div>
                     </div>
-                    <p>Question stuff etc</p>
+                    <p id="Q-${i}-question-text"></p>
                     <div class="stats-border">
                         <div class="all-stats-container">
                             <div id="Q-${i}-sample-stats-container" class="stats-container-single">
