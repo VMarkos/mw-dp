@@ -80,14 +80,14 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
         questionText += `Construct a${isRanked["sample"] ? " <b>ranked</b>" : "n <b>unranked</b>"} sample which is ${targetDiversity}% diverse given the ${isRanked["population"] ? "<b>ranked</b>" : "<b>unranked</b>"} population shown left.`
         questionTextP.innerHTML = questionText;
         if (isRanked["population"]) {
-            drawRankedList(questionId, population, populationRanking, colors, "Population");
+            drawRankedList(questionId, "sample", population, populationRanking, colors, "Population");
         } else {
-            drawUnrankedSet(questionId, population, colors, "Population");
+            drawUnrankedSet(questionId, "population", population, colors, "Population");
         }
 		if (isRanked["sample"]) {
-			drawRankedList(questionId, [SAMPLE_SIZE], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ["#ffffff"], "Sample", "#808080");
+			drawRankedList(questionId, "sample", [SAMPLE_SIZE], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ["#ffffff"], "Sample", "#808080");
 		} else {
-			drawUnrankedSet(questionId, [SAMPLE_SIZE], ["#ffffff"], "Sample", "#808080");
+			drawUnrankedSet(questionId, "sample", [SAMPLE_SIZE], ["#ffffff"], "Sample", "#808080");
 		}
         addOnClickEvents(questionId, population, addToSample);
         return;
@@ -102,15 +102,15 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
     questionTextP.innerHTML = questionText;
     if (knownPopulation) {
         if (isRanked["population"]) {
-            drawRankedList(questionId, population, populationRanking, colors, "Population");
+            drawRankedList(questionId, "sample", population, populationRanking, colors, "Population");
         } else {
-            drawUnrankedSet(questionId, population, colors, "Population");
+            drawUnrankedSet(questionId, "population", population, colors, "Population");
         }
     }
 	if (isRanked["sample"]){
-		drawRankedList(questionId, sample, sampleRanking, colors, "Sample");
+		drawRankedList(questionId, "sample", sample, sampleRanking, colors, "Sample");
 	} else {
-		drawUnrankedSet(questionId, sample, colors, "Sample");
+		drawUnrankedSet(questionId, "sample", sample, colors, "Sample");
 	}
 }
 
@@ -249,10 +249,10 @@ function addUserClass(questionId, classColor) {
     statsContainer.prepend(userClassContainer);
 }
 
-function drawUnrankedSet(questionId, distribution, colors, label, borderColor="white") {
+function drawUnrankedSet(questionId, set, distribution, colors, label, borderColor="white") {
     const VIEWBOX_WIDTH = 200;
     const VIEWBOX_HEIGHT = 200;
-    const statsContainer = document.getElementById(questionId + "-stats-container");
+    const statsContainer = document.getElementById(questionId + "-" + set + "-stats-container");
     const container = document.createElementNS(SVG_NS, "svg");
     container.setAttribute("xmlns", XMLNS);
     container.setAttribute("viewBox", "0 0 " + VIEWBOX_WIDTH + " " + VIEWBOX_HEIGHT);
@@ -300,10 +300,10 @@ function drawUnrankedSet(questionId, distribution, colors, label, borderColor="w
     statsContainer.appendChild(container);
 }
 
-function drawRankedList(questionId, distribution, ranking, colors, label, borderColor="white") {
+function drawRankedList(questionId, set, distribution, ranking, colors, label, borderColor="white") {
     const VIEWBOX_WIDTH = 200;
     const VIEWBOX_HEIGHT = 100;
-    const statsContainer = document.getElementById(questionId + "-stats-container");
+    const statsContainer = document.getElementById(questionId + "-" + set + "-stats-container");
     const container = document.createElementNS(SVG_NS, "svg");
     container.setAttribute("xmlns", XMLNS);
     container.setAttribute("viewBox", "0 0 " + VIEWBOX_WIDTH + " " + VIEWBOX_HEIGHT);
@@ -331,8 +331,9 @@ function drawRankedList(questionId, distribution, ranking, colors, label, border
     line = document.createElementNS(SVG_NS, "polyline");
     line.style.stroke = "black";
     line.style.strokeWidth = "0.5";
-    line.setAttribute("marker-end", "url(#arrow)");
-    line.setAttribute("points", "0," + lineY + " " + (0.98 * VIEWBOX_WIDTH) + "," + lineY);
+    // line.setAttribute("marker-end", "url(#arrow)");
+    // console.log(line.getAttribute("marker-end"));
+    line.setAttribute("points", "0," + lineY + " " + (1.00 * VIEWBOX_WIDTH) + "," + lineY);
     firstLabel = document.createElementNS(SVG_NS, "text");
     firstLabel.setAttribute("x", 0);
     firstLabel.setAttribute("y", lineY - 4);
@@ -340,7 +341,7 @@ function drawRankedList(questionId, distribution, ranking, colors, label, border
     firstLabel.appendChild(firstLabelText);
     firstLabel.setAttribute("font-size", "12");
     lastLabel = document.createElementNS(SVG_NS, "text");
-    lastLabel.setAttribute("x", 0.98 * VIEWBOX_WIDTH);
+    lastLabel.setAttribute("x", 1.00 * VIEWBOX_WIDTH);
     lastLabel.setAttribute("y", lineY - 4);
     lastLabelText = document.createTextNode("last");
     lastLabel.setAttribute("text-anchor", "end");
@@ -411,13 +412,22 @@ function initializeQuestions() {
 					<h2>Question</h2>
 					<div id="Q-${i}-progress-circle" class="progress-circle"></div>
 				</div>
-				<p id="Q-${i}-question-text"></p>
-				<div id="Q-${i}-stats-border" class="stats-border">
-					<div id="Q-${i}-all-stats-container" class="all-stats-container">
-						<div id="Q-${i}-stats-container" class="stats-container-grid">
-						</div>
-					</div>
-				</div>
+                <div class="question-grid-container">
+                    <p id="Q-${i}-question-text"></p>
+                    <div id="Q-${i}-stats-border" class="stats-border">
+                        <div id="Q-${i}-all-stats-container" class="all-stats-container">
+                            <div id="Q-${i}-population-stats-container" class="stats-container-single">
+                            </div>
+                        </div>
+                    </div>
+                    <p>Question stuff etc</p>
+                    <div class="stats-border">
+                        <div class="all-stats-container">
+                            <div id="Q-${i}-sample-stats-container" class="stats-container-single">
+                            </div>
+                        </div>
+                    </div>
+                </div>
 				<div id="Q-${i}-submit-button" class="submit-button-container" onclick="proceedToNext()">
 					Next
 				</div>
