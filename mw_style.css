@@ -186,6 +186,18 @@ body {
 	color: black;
 }
 
+.add-class-button-container {
+	display: flex;
+	gap: 10px;
+}
+
+.add-class-button {
+	border-radius: 50%;
+	width: 40px;
+	height: 40px;
+	cursor: pointer;
+}
+
 /*
  * #e8f9fd --- ice
  * #79dae8 --- cyan?

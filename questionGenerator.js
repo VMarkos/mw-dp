@@ -83,21 +83,27 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
             userClass = Math.floor(population.length * Math.random());
             addUserClass(questionId, colors[userClass]);
         }
-        contextText += `${isUserIn ? "Then, g" : "G"}iven the ${isRanked["population"] ? "<b>ranked</b>" : "<b>unranked</b>"} population, ${isUserIn ? "also ": ""}shown right...`;
+        contextText += `${isUserIn ? "Then, g" : "G"}iven the ${knownPopulation ? isRanked["population"] ? "<b>ranked</b> population" : "<b>unranked</b> population" : "classes"}, ${isUserIn ? "also ": ""}shown right...`;
         contextTextP.innerHTML = contextText;
         questionText += `...construct a${isRanked["sample"] ? " <b>ranked</b>" : "n <b>unranked</b>"} sample which is <b>as diverse as possible</b>.`
         questionTextP.innerHTML = questionText;
-        if (isRanked["population"]) {
-            drawRankedList(questionId, "population", population, populationRanking, colors, "Population");
+        if (!knownPopulation) {
+            drawClassButtonPanel(questionId, "population", colors);
         } else {
-            drawUnrankedSet(questionId, "population", population, colors, "Population");
+            if (isRanked["population"]) {
+                drawRankedList(questionId, "population", population, populationRanking, colors, "Population");
+            } else {
+                drawUnrankedSet(questionId, "population", population, colors, "Population");
+            }
         }
 		if (isRanked["sample"]) {
 			drawRankedList(questionId, "sample", [SAMPLE_SIZE], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ["#ffffff"], "Sample", "#808080");
 		} else {
 			drawUnrankedSet(questionId, "sample", [SAMPLE_SIZE], ["#ffffff"], "Sample", "#808080");
 		}
-        addOnClickEvents(questionId, population, addToSample);
+        if (knownPopulation) {
+            addOnClickEvents(questionId, population, addToSample);
+        }
         return;
 	}
     addDiversitySlider(questionId);
@@ -122,6 +128,75 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
 	} else {
 		drawUnrankedSet(questionId, "sample", sample, colors, "Sample");
 	}
+}
+
+function addClassToSample(event) {
+    const classElement = event.target;
+    let minEmptyPosition = getMinEmptyPosition();
+    // console.log(minEmptyPosition);
+    const sampleIdPrefix = "Q-" + answeredQuestions;
+    const sampleId = sampleIdPrefix + "-Sample-0-" + minEmptyPosition;
+    const currentSampleElement = document.getElementById(sampleId);
+    let populationPrefix = sampleIdPrefix + "-Population-";
+    // console.log(element, currentSampleElement);
+    // console.log(classElement.style.background);
+    currentSampleElement.style.fill = classElement.style.fill;
+    currentSampleElement.style.stroke = "white";
+    samplePositions[minEmptyPosition] = true;
+    currentSampleElement.style.cursor = "pointer";
+    currentSampleElement.addEventListener("mouseup", removeClassFromSample);
+    minEmptyPosition = getMinEmptyPosition();
+    // console.log(populationPrefix);
+    if (minEmptyPosition === SAMPLE_SIZE) {
+		const allPopulationElements = document.querySelectorAll("[id^='" + populationPrefix + "']");
+		for (const populationElement of allPopulationElements) {
+            populationElement.removeEventListener("mouseup", addClassToSample);
+            populationElement.style.cursor = "auto";
+            populationElement.style.opacity = "0.5";
+		}
+	}
+}
+
+function removeClassFromSample(event) {
+    const sampleElement = event.target;
+    const splitPopPrefix = sampleElement.id.split("-").filter(Boolean);
+    const populationPrefix = splitPopPrefix[0] + "-" + splitPopPrefix[1] + "-Population-";
+    const position = parseInt(sampleElement.id.split(/Q-\d+-Sample-0-/g)[1]);
+    // console.log("position:", position);
+    let justEmptied = getMinEmptyPosition() === SAMPLE_SIZE;
+    let hasListener;
+    sampleElement.style.cursor = "auto";
+    sampleElement.style.fill = "#ffffff";
+    sampleElement.style.stroke = "#808080";
+    sampleElement.removeEventListener("mouseup", removeClassFromSample);
+    samplePositions[position] = false;
+    minEmptyPosition = getMinEmptyPosition();
+    // console.log(populationPrefix);
+    if (justEmptied) {
+        const allPopulationElements = document.querySelectorAll("[id^='" + populationPrefix + "'");
+        for (const popElement of allPopulationElements) {
+            popElement.addEventListener("mouseup", addClassToSample);
+            popElement.style.cursor = "pointer";
+            popElement.style.opacity = "1.0";
+        }
+    }
+}
+
+function drawClassButtonPanel(questionId, set, colors) {
+    const statsContainer = document.getElementById(questionId + "-" + set + "-stats-container");
+    let classButton;
+    const classButtonContainer = document.createElement("div");
+    classButtonContainer.classList.add("add-class-button-container");
+    for (const color of colors) {
+        classButton = document.createElement("div");
+        classButton.classList.add("add-class-button");
+        classButton.style.fill = color;
+        classButton.style.background = color;
+        classButton.id = questionId + "-Population-class-button";
+        classButton.addEventListener("mouseup", addClassToSample);
+        classButtonContainer.appendChild(classButton);
+    }
+    statsContainer.appendChild(classButtonContainer);
 }
 
 function shuffleList(x) { // Fischer-Yates shuffling algorithm.
