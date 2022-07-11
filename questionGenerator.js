@@ -1,7 +1,9 @@
 const XMLNS = "http://www.w3.org/2000/svg";
 const SVG_NS = "http://www.w3.org/2000/svg";
 const SAMPLE_SIZE = 12;
-const TOTAL_QUESTIONS = 20;
+const TOTAL_QUESTIONS = 6;
+const SAMPLE_TOOLTIP = "Click to remove";
+const POPULATION_TOOLTIP = "Click to add";
 
 const ITEMS = {
     "i0": {
@@ -54,9 +56,10 @@ function initializeSamplePositions() {
     }
 }
 
-function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObserved) { // All boolean except for isRanked = {"population": Boolean, "sample": Boolean}.
+function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObserved, isDemo) { // All boolean except for isRanked = {"population": Boolean, "sample": Boolean}.
     // console.log("here", questionId);
     const statsContainer = document.getElementById(questionId + "-stats-container");
+    const questionHeader = document.getElementById(questionId + "-question-heading");
     const questionTextP = document.getElementById(questionId + "-question-text");
     const contextTextP = document.getElementById(questionId + "-context-text");
     const questionGridContainer = document.getElementById(questionId + "-question-grid-container");
@@ -68,6 +71,9 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
     const colors = shuffleList(COLORS); // Shuffle colors to avoid any correlations between groups and colors.
     let userClass, questionText = "", contextText = "";
     let bothRanked = false;
+    if (isDemo) {
+        questionHeader.innerHTML = "Demo";
+    }
     if (!knownPopulation && isObserved && !isUserIn) {
 		questionGridContainer.removeChild(document.getElementById(questionId + "-context-text"));
 		questionGridContainer.removeChild(document.getElementById(questionId + "-stats-border"));
@@ -83,9 +89,17 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
             userClass = Math.floor(population.length * Math.random());
             addUserClass(questionId, colors[userClass]);
         }
-        contextText += `${isUserIn ? "Then, g" : "G"}iven the ${knownPopulation ? isRanked["population"] ? "<b>ranked</b> population" : "<b>unranked</b> population" : "classes"}, ${isUserIn ? "also ": ""}shown right...`;
+        if (isDemo) {
+            contextText += `Also right, you are presented with ${knownPopulation ? isRanked["population"] ? "a <b>ranked</b> population with items from" : "an <b>unrakned</b> population with items from" : ""} five classes, denoted by color.`;
+        } else {
+            contextText += `${isUserIn || isDemo ? "Then, g" : "G"}iven the ${knownPopulation ? isRanked["population"] ? "<b>ranked</b> population" : "<b>unranked</b> population" : "classes"}, ${isUserIn ? "also ": ""}shown right...`;
+        }
         contextTextP.innerHTML = contextText;
-        questionText += `...construct a${isRanked["sample"] ? " <b>ranked</b>" : "n <b>unranked</b>"} sample which is <b>as diverse as possible</b>.`
+        if (isDemo) {
+            questionText += `You are requested to construct a ${isRanked["sample"] ? " <b>ranked</b>" : "n <b>unranked</b>"} sample of 12 items, each ${knownPopulation ? "drawn from the population" : "belonging to one of the five (5) classes"} shown above. Add an item to the sample by clicking on it ${knownPopulation ? "" : "s class"} (sample items are removed by simply clicking on them).`;
+        } else {
+            questionText += `...construct a${isRanked["sample"] ? " <b>ranked</b>" : "n <b>unranked</b>"} sample which is <b>as diverse as possible</b>.`
+        }
         questionTextP.innerHTML = questionText;
         if (!knownPopulation) {
             drawClassButtonPanel(questionId, "population", colors);
@@ -113,9 +127,16 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
         addUserClass(questionId, colors[userClass]);
     }
     questionText += `${knownPopulation ? "...h" : "H"}ow diverse would you consider the ${isRanked["sample"] ? "<b>ranked</b>" : "<b>unranked</b>"} sample shown right to be?`;
+    if (isDemo) {
+        questionText += ` Provide your estimation by drawing the slider shown below (right means more diverse while left means less).`;
+    }
     questionTextP.innerHTML = questionText;
     if (knownPopulation) {
-        contextText += `${isUserIn ? "Then, g" : "G"}iven the ${isRanked["population"] ? "<b>ranked</b>" : "<b>unranked</b>"} population, ${isUserIn ? "also ": ""}shown right...`;
+        if (isDemo) {
+            contextText += `Also right, you are presented with ${isRanked["population"] ? "a <b>ranked</b>" : "an <b>unrakned</b>"} population with items from five classes, denoted by color.`;
+        } else {
+            contextText += `${isUserIn ? "Then, g" : "G"}iven the ${isRanked["population"] ? "<b>ranked</b>" : "<b>unranked</b>"} population, ${isUserIn ? "also ": ""}shown right...`;
+        }
         if (isRanked["population"]) {
             drawRankedList(questionId, "population", population, populationRanking, colors, "Population");
         } else {
@@ -293,6 +314,7 @@ function removeFromSample(event) {
     sampleElement.style.fill = "#ffffff";
     sampleElement.style.stroke = "#808080";
     sampleElement.removeEventListener("mouseup", removeFromSample);
+    // TODO Add tooltips manually by adding a div with position rel/absolute on top of each svg and style them accordingly.
     populationElement.style.cursor = "pointer";
     populationElement.style.fillOpacity = "1.0";
     populationElement.addEventListener("mouseup", addToSample);
@@ -480,8 +502,8 @@ function drawProgressCircle(questionId) {
     progressContainer.appendChild(container);
 }
 
-function initializeQuestions() { // TODO It remains to fix the context/question DIVs, add descriptions etc.
-	let nextQuestion, nextQuestionId;
+function initializeQuestions(condition1, condition2) {
+	let nextQuestion, nextQuestionId, isDemo, knownPopulation, isRanked, isUserIn, isObserved;
     for (let i = 0; i < TOTAL_QUESTIONS; i++) {
 		nextQuestionId = "Q-" + i;
 		nextQuestion = document.createElement("div");
@@ -494,7 +516,7 @@ function initializeQuestions() { // TODO It remains to fix the context/question 
 		}
 		nextQuestion.innerHTML = `<div id="Q-${i}-question-container" class="question-container">
 				<div class="question-header-container">
-					<h2>Question</h2>
+					<h2 id="Q-${i}-question-heading">Question</h2>
 					<div id="Q-${i}-progress-circle" class="progress-circle"></div>
 				</div>
                 <div id="Q-${i}-question-grid-container" class="question-grid-container">
@@ -519,12 +541,47 @@ function initializeQuestions() { // TODO It remains to fix the context/question 
 			</div>`;
 		document.body.appendChild(nextQuestion);
 		// console.log(document.body.innerHTML);
-		generateQuestion(nextQuestionId, (Math.random() < 0.5), {"population": (Math.random() < 0.5), "sample": (Math.random() < 0.5)}, (Math.random() < 0.5), (Math.random() < 0.5));
+        isDemo = i % (TOTAL_QUESTIONS / 2) === 0;
+        if (i < TOTAL_QUESTIONS / 2) {
+            knownPopulation = condition1["knownPopulation"];
+            isRanked = condition1["isRanked"];
+            isUserIn = condition1["isUserIn"];
+            isObserved = condition1["isObserved"];
+        } else {
+            knownPopulation = condition2["knownPopulation"];
+            isRanked = condition2["isRanked"];
+            isUserIn = condition2["isUserIn"];
+            isObserved = condition2["isObserved"];
+        }
+        generateQuestion(nextQuestionId, knownPopulation, isRanked, isUserIn, isObserved, isDemo);
+		// generateQuestion(nextQuestionId, (Math.random() < 0.5), {"population": (Math.random() < 0.5), "sample": (Math.random() < 0.5)}, (Math.random() < 0.5), (Math.random() < 0.5), isDemo);
 		drawProgressCircle(nextQuestionId);
     }
 }
 
-window.addEventListener("load", function() {initializeQuestions();});
+function init() {
+    const condition1 = {
+        knownPopulation: true,
+        isRanked: {
+            population: true,
+            sample: false,
+        },
+        isUserIn: true,
+        isObserved: true,
+    };
+    const condition2 = {
+        knownPopulation: true,
+        isRanked: {
+            population: true,
+            sample: false,
+        },
+        isUserIn: true,
+        isObserved: false,
+    };
+    initializeQuestions(condition1, condition2);
+}
+
+window.addEventListener("load", function() {init();});
 
 /*
 In terms of display, you have the following types of questions:

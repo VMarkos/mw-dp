@@ -14,7 +14,17 @@ function nextQuestion(previous, next) {
 function proceedToNext() {
 	const previous = document.getElementById("Q-" + answeredQuestions);
 	answeredQuestions++;
-	const next = document.getElementById("Q-" + answeredQuestions);
+	let nextId;
+	if (answeredQuestions === TOTAL_QUESTIONS) {
+		nextId = "Q-end";
+	} else {
+		nextId = "Q-" + answeredQuestions;
+	}
+	const next = document.getElementById(nextId);
 	nextQuestion(previous, next);
 	initializeSamplePositions();
+}
+
+function endStudy() {
+	window.location = "https://vmarkos.github.io/mw-dp/";
 }
