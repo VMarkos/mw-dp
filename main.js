@@ -12,19 +12,37 @@ function nextQuestion(previous, next) {
 }
 
 function proceedToNext() {
-	const previous = document.getElementById("Q-" + answeredQuestions);
-	answeredQuestions++;
-	let nextId;
-	if (answeredQuestions === TOTAL_QUESTIONS) {
-		nextId = "Q-end";
-	} else {
-		nextId = "Q-" + answeredQuestions;
+	if (canProceed) {
+		let previous = document.getElementById("Q-" + answeredQuestions);
+		let nextId;
+		answeredQuestions++;
+		if (studyStart) {
+			answeredQuestions--;
+			studyStart = false;
+			previous = document.getElementById("Q-start");
+			nextId = "Q-" + answeredQuestions;
+			console.log(nextId);
+			canProceed = false;
+		} else if (answeredQuestions === TOTAL_QUESTIONS) {
+			nextId = "Q-end";
+			RESPONSES["Q-" + (answeredQuestions - 1)] = {
+				"response": (typeof currentResponse["response"] === "object") ? [...currentResponse["response"]] : parseInt(currentResponse["response"]),
+			};
+			chosenItems = {};
+		} else {
+			nextId = "Q-" + answeredQuestions;
+			RESPONSES["Q-" + (answeredQuestions - 1)] = {
+				"response": (typeof currentResponse["response"] === "object") ? [...currentResponse["response"]] : parseInt(currentResponse["response"]),
+			};
+			chosenItems = {};
+		}
+		const next = document.getElementById(nextId);
+		nextQuestion(previous, next);
+		initializeSamplePositions();
 	}
-	const next = document.getElementById(nextId);
-	nextQuestion(previous, next);
-	initializeSamplePositions();
 }
 
 function endStudy() {
-	window.location = "https://vmarkos.github.io/mw-dp/";
+	console.log("Responses:", RESPONSES);
+	// window.location = "https://vmarkos.github.io/mw-dp/";
 }

@@ -4,6 +4,11 @@ const SAMPLE_SIZE = 12;
 const TOTAL_QUESTIONS = 6;
 const SAMPLE_TOOLTIP = "Click to remove";
 const POPULATION_TOOLTIP = "Click to add";
+let canProceed = true;
+let studyStart = true;
+
+const RESPONSES = {};
+let currentResponse = {};
 
 const ITEMS = {
     "i0": {
@@ -36,13 +41,15 @@ const SVG_DEFS = `<defs>
 </marker>
 </defs>`;
 
-const DIVERSITY_SLIDER = `<div class="diversity-slider-labels-container">
-<div>Low</div>
-<div>High</div>
-</div>
-<input type="range" id="diversity" min="0" max="100" value="50">`;
+const DIVERSITY_SLIDER = (questionId) => { 
+    return `<div class="diversity-slider-labels-container">
+        <div>Low</div>
+        <div>High</div>
+    </div>
+    <input type="range" id="${questionId}-diversity" min="0" max="100" value="50">`;
+}
 
-const chosenItems = {} // Maps sample entries ids to population ids.
+let chosenItems = {} // Maps sample entries ids to population ids.
 
 const N_ITEMS = Object.keys(ITEMS).length;
 
@@ -90,7 +97,7 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
             addUserClass(questionId, colors[userClass]);
         }
         if (isDemo) {
-            contextText += `Also right, you are presented with ${knownPopulation ? isRanked["population"] ? "a <b>ranked</b> population with items from" : "an <b>unrakned</b> population with items from" : ""} five classes, denoted by color.`;
+            contextText += `Also right, you are presented with ${knownPopulation ? isRanked["population"] ? "a <b>ranked</b> population with items from" : "an <b>unrakned</b> population with items from" : ""} five classes, denoted by color...`;
         } else {
             contextText += `${isUserIn || isDemo ? "Then, g" : "G"}iven the ${knownPopulation ? isRanked["population"] ? "<b>ranked</b> population" : "<b>unranked</b> population" : "classes"}, ${isUserIn ? "also ": ""}shown right...`;
         }
@@ -116,6 +123,7 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
 			drawUnrankedSet(questionId, "sample", [SAMPLE_SIZE], ["#ffffff"], "Sample", "#808080");
 		}
         if (knownPopulation) {
+            console.log("population:", population);
             addOnClickEvents(questionId, population, addToSample);
         }
         return;
@@ -133,7 +141,7 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
     questionTextP.innerHTML = questionText;
     if (knownPopulation) {
         if (isDemo) {
-            contextText += `Also right, you are presented with ${isRanked["population"] ? "a <b>ranked</b>" : "an <b>unrakned</b>"} population with items from five classes, denoted by color.`;
+            contextText += `Also right, you are presented with ${isRanked["population"] ? "a <b>ranked</b>" : "an <b>unrakned</b>"} population with items from five classes, denoted by color...`;
         } else {
             contextText += `${isUserIn ? "Then, g" : "G"}iven the ${isRanked["population"] ? "<b>ranked</b>" : "<b>unranked</b>"} population, ${isUserIn ? "also ": ""}shown right...`;
         }
@@ -238,7 +246,13 @@ function addDiversitySlider(questionId) {
     const diversitySlideContainer = document.createElement("div");
     const submitButton = document.getElementById(questionId + "-submit-button");
     diversitySlideContainer.classList.add("diversity-slider-container");
-    diversitySlideContainer.innerHTML = DIVERSITY_SLIDER;
+    diversitySlideContainer.addEventListener("click", () => {
+        canProceed = true;
+        submitButton.classList.remove("inactive");
+        currentResponse = {"response": document.getElementById(questionId + "-diversity").value};
+        // console.log(currentResponse);
+    }, false);
+    diversitySlideContainer.innerHTML = DIVERSITY_SLIDER(questionId);
     currentQuestion.insertBefore(diversitySlideContainer, submitButton);
 }
 
@@ -272,7 +286,7 @@ function addToSample(event) { // TODO Consider adding a number on top of each el
     const sampleId = sampleIdPrefix + "-Sample-0-" + minEmptyPosition;
     const currentSampleElement = document.getElementById(sampleId);
     let hasListener, populationPrefix = sampleIdPrefix + "-Population-";
-    // console.log(element, currentSampleElement);
+    console.log(element.id, sampleId);
     currentSampleElement.style.fill = element.style.fill;
     currentSampleElement.style.stroke = "white";
     element.style.fillOpacity = "0.5";
@@ -284,13 +298,25 @@ function addToSample(event) { // TODO Consider adding a number on top of each el
     currentSampleElement.style.cursor = "pointer";
     currentSampleElement.addEventListener("mouseup", removeFromSample);
     minEmptyPosition = getMinEmptyPosition();
-    // console.log(populationPrefix);
     if (minEmptyPosition === SAMPLE_SIZE) {
+        // currentResponse = {};
+        console.log("Just emptied:", currentResponse);
 		const allPopulationElements = document.querySelectorAll("[id^='" + populationPrefix + "']");
+        const resp = [];
+        for (const samplePos in chosenItems) {
+            resp.push({
+                "samplePosition": parseInt(samplePos.split("-")[4]),
+                "populationClass": parseInt(document.getElementById(chosenItems[samplePos]).getAttribute("popClass")),
+            });   
+        }
+        // console.log("resp:", resp);
+        currentResponse = {"response": resp};
+        console.log(currentResponse);
 		for (const populationElement of allPopulationElements) {
             // if (!populationElement.id.includes("Population")) {
             //     continue;
             // }
+            // console.log("chosenItems:", chosenItems);
             hasListener = populationElement.getAttribute("data-listener") === "true";
 			if (hasListener) {
 				populationElement.removeEventListener("mouseup", addToSample);
@@ -298,6 +324,9 @@ function addToSample(event) { // TODO Consider adding a number on top of each el
                 populationElement.style.cursor = "auto";
 			}
 		}
+        const submitButton = document.getElementById(sampleIdPrefix + "-submit-button");
+        submitButton.classList.remove("inactive");
+        canProceed = true;
 	}
 }
 
@@ -307,6 +336,12 @@ function removeFromSample(event) {
     const splitPopPrefix = sampleElement.id.split("-").filter(Boolean);
     const populationPrefix = splitPopPrefix[0] + "-" + splitPopPrefix[1] + "-Population-";
     const position = parseInt(sampleElement.id.split(/Q-\d+-Sample-0-/g)[1]);
+    console.log(splitPopPrefix);
+    if (canProceed) {
+        canProceed = false;
+        const submitButton = document.getElementById(splitPopPrefix[0] + "-" + splitPopPrefix[1] + "-submit-button");
+        submitButton.classList.add("inactive");
+    }
     // console.log("position:", position);
     let justEmptied = getMinEmptyPosition() === SAMPLE_SIZE;
     let hasListener;
@@ -321,7 +356,7 @@ function removeFromSample(event) {
     populationElement.setAttribute("data-listener", true);
     delete chosenItems[sampleElement.id];
     samplePositions[position] = false;
-    minEmptyPosition = getMinEmptyPosition();
+    // let minEmptyPosition = getMinEmptyPosition();
     // console.log(populationPrefix);
     if (justEmptied) {
         const allPopulationElements = document.querySelectorAll("[id^='" + populationPrefix + "'");
@@ -419,6 +454,7 @@ function drawRankedList(questionId, set, distribution, ranking, colors, label, b
     const HEIGHT = 0.24 * VIEWBOX_HEIGHT;
 	const WIDTH = VIEWBOX_WIDTH / N;
 	let rect, line, firstLabel, lastLabel, overallLabel, firstLabelText, lastLabelText, overallLabelText, currentX = 0, currentY = VIEWBOX_HEIGHT / 2 - HEIGHT / 2, lineY = VIEWBOX_HEIGHT / 2 - HEIGHT;
+    console.log("distribution:", distribution);
 	for (let i = 0; i < distribution.length; i++) {
 		for (j = 0; j < distribution[i]; j++) {
 			rect = document.createElementNS(SVG_NS, "rect");
@@ -430,6 +466,7 @@ function drawRankedList(questionId, set, distribution, ranking, colors, label, b
 			rect.setAttribute("y", currentY);
 			rect.setAttribute("width", WIDTH);
 			rect.setAttribute("height", HEIGHT);
+            rect.setAttribute("popClass", ranking[currentX]);
 			currentX++;
 			container.appendChild(rect);
             // console.log("drawRankedList", rect.id);
@@ -509,7 +546,7 @@ function initializeQuestions(condition1, condition2) {
 		nextQuestion = document.createElement("div");
 		nextQuestion.id = nextQuestionId;
 		nextQuestion.classList.add("question-row-container");
-		if (i > 0) {
+		if (i >= 0) {
 			// console.log("no-display");
 			nextQuestion.classList.add("no-display");
 			nextQuestion.classList.add("invisible");
@@ -535,7 +572,7 @@ function initializeQuestions(condition1, condition2) {
                         </div>
                     </div>
                 </div>
-				<div id="Q-${i}-submit-button" class="submit-button-container" onclick="proceedToNext()">
+				<div id="Q-${i}-submit-button" class="submit-button-container inactive" onclick="proceedToNext()">
 					Next
 				</div>
 			</div>`;
@@ -560,6 +597,50 @@ function initializeQuestions(condition1, condition2) {
 }
 
 function init() {
+    const initBox = document.createElement("div");
+    initBox.id = "Q-start";
+    initBox.classList.add("question-row-container");
+    const initQcont = document.createElement("div");
+    initQcont.id = "Q-start-question-container";
+    initQcont.classList.add("question-container");
+    const qHeaderCont = document.createElement("div");
+    qHeaderCont.classList.add("question-header-container");
+    const h2 = document.createElement("h2");
+    h2.innerText = "Study Description";
+    h2.id = "Q-start-question-heading";
+    const progressCircle = document.createElement("div");
+    progressCircle.id = "Q-start-progress-circle";
+    progressCircle.classList.add("progress-circle");
+    qHeaderCont.append(h2);
+    qHeaderCont.append(progressCircle);
+    const startP = document.createElement("p");
+    startP.innerHTML = `<div>
+        <p>Welcome to our survey!</p>
+        <p>You are about to take a survey regarding diversity perception. In what follows, it will be useful to bear in mind that:</p>
+        <ul>
+            <li>Your answers need not be elaborate. We are mostly looking for spontaneous feedback.</li>
+            <li>Your answers will be monitored for consistency.</li>
+            <li>You will be presented with 22 tasks, split into two groups of 11 tasks each.</li>
+            <li>The first task in each group is a demo task, designed to help you get accustomed with the rest.</li>
+        </ul>
+        <p>Thank you for participating in our survey! :)</p>
+    </div>`;
+    const submitButton = document.createElement("div");
+    submitButton.id = "Q-start-submit-button";
+    submitButton.classList.add("submit-button-container");
+    submitButton.innerText = "Start!";
+    submitButton.addEventListener("click", () => {
+        startStudy();
+        proceedToNext();
+    }, false);
+    initQcont.append(qHeaderCont);
+    initQcont.append(startP);
+    initQcont.append(submitButton);
+    initBox.append(initQcont);
+    document.body.append(initBox);
+}
+
+function startStudy() {
     const condition1 = {
         knownPopulation: true,
         isRanked: {
