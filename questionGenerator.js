@@ -252,9 +252,10 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
     const sample = ITEMS[index]["sample"];
     const sampleRanking = ITEMS[index]["sampleRanking"];
     const populationRanking = ITEMS[index]["populationRanking"];
+    let userClass = ITEMS[index]["userClass"];
     // const colors = shuffleList(COLORS); // Shuffle colors to avoid any correlations between groups and colors.
     const colors = qColors[parseInt(questionId.split("-")[1])];
-    let userClass, questionText = "", contextText = "";
+    let questionText = "", contextText = "";
     // let bothRanked = false;
     if (isDemo) {
         questionHeader.innerHTML = "Demo";
@@ -271,7 +272,7 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
 	if (!isObserved) {
         if (isUserIn) {
             contextText += "Assume you belong to the class shown right. ";
-            userClass = Math.floor(population.length * Math.random());
+            // userClass = Math.floor(population.length * Math.random());
             addUserClass(questionId, colors[userClass]);
         }
         if (isDemo) {
@@ -309,7 +310,7 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
     addDiversitySlider(questionId);
     if (isUserIn) {
         contextText += "Assume you belong to the class shown right. ";
-        userClass = Math.floor(population.length * Math.random());
+        // userClass = Math.floor(population.length * Math.random());
         addUserClass(questionId, colors[userClass]);
     }
     questionText += `${knownPopulation ? "...h" : "H"}ow diverse would you consider the ${isRanked["sample"] ? "<b>ranked</b>" : "<b>unranked</b>"} sample shown right to be?`;
