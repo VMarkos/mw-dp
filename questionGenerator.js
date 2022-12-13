@@ -1,7 +1,7 @@
 const XMLNS = "http://www.w3.org/2000/svg";
 const SVG_NS = "http://www.w3.org/2000/svg";
 const SAMPLE_SIZE = 12;
-const TOTAL_QUESTIONS = 6;
+const TOTAL_QUESTIONS = 22;
 const SAMPLE_TOOLTIP = "Click to remove";
 const POPULATION_TOOLTIP = "Click to add";
 let canProceed = true;
@@ -10,20 +10,177 @@ let studyStart = true;
 const RESPONSES = {};
 let currentResponse = {};
 
-const ITEMS = {
-    "i0": {
-        "population": [3, 4, 6, 8, 3],
-        "sample": [2, 2, 3, 4, 1],
-        "populationRanking": [0, 0, 1, 0, 1, 1, 1, 2, 2, 2, 2, 2, 2, 4, 3, 4, 3, 4, 3, 3, 3, 3, 3, 3],
-        "sampleRanking": [0, 2, 2, 3, 4, 3, 2, 0, 1, 3, 3, 1],
+// const ITEMS = {
+//     "i0": {
+//         "population": [3, 4, 6, 8, 3],
+//         "sample": [2, 2, 3, 4, 1],
+//         "populationRanking": [0, 0, 1, 0, 1, 1, 1, 2, 2, 2, 2, 2, 2, 4, 3, 4, 3, 4, 3, 3, 3, 3, 3, 3],
+//         "sampleRanking": [0, 2, 2, 3, 4, 3, 2, 0, 1, 3, 3, 1],
+//     },
+//     "i1": {
+//         "population": [2, 5, 1, 8, 8],
+//         "sample": [2, 2, 1, 4, 3],
+//         "populationRanking": [0, 1, 2, 3, 4, 4, 3, 1, 1, 0, 3, 4, 3, 4, 3, 4, 1, 3, 1, 4, 3, 4, 3, 4],
+//         "sampleRanking": [0, 4, 4, 2, 3, 4, 3, 0, 1, 3, 3, 1],
+//     },
+// };
+
+const ITEMS = [
+    {
+        "population": [5, 5, 5, 5, 4],
+        "sample": [3, 2, 3, 2, 2],
+        "populationRanking": [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4],
+        "sampleRanking": [],
+        "userClass": 1
     },
-    "i1": {
-        "population": [2, 5, 1, 8, 8],
-        "sample": [2, 2, 1, 4, 3],
-        "populationRanking": [0, 1, 2, 3, 4, 4, 3, 1, 1, 0, 3, 4, 3, 4, 3, 4, 1, 3, 1, 4, 3, 4, 3, 4],
-        "sampleRanking": [0, 4, 4, 2, 3, 4, 3, 0, 1, 3, 3, 1],
+    {
+        "population": [5, 5, 5, 5, 4],
+        "sample": [5, 1, 2, 2, 2],
+        "populationRanking": [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4],
+        "sampleRanking": [],
+        "userClass": 1
     },
-};
+    {
+        "population": [5, 5, 5, 5, 4],
+        "sample": [3, 2, 3, 2, 2],
+        "populationRanking": [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4],
+        "sampleRanking": [],
+        "userClass": 4
+    },
+    {
+        "population": [5, 5, 5, 5, 4],
+        "sample": [2, 2, 2, 2, 4],
+        "populationRanking": [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4],
+        "sampleRanking": [],
+        "userClass": 4
+    },
+    {
+        "population": [5, 5, 5, 5, 4],
+        "sample": [3, 2, 3, 2, 2],
+        "populationRanking": [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3],
+        "sampleRanking": [],
+        "userClass": 1
+    },
+    {
+        "population": [5, 5, 5, 5, 4],
+        "sample": [5, 2, 1, 2, 2],
+        "populationRanking": [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3],
+        "sampleRanking": [],
+        "userClass": 1
+    },
+    {
+        "population": [5, 5, 5, 5, 4],
+        "sample": [3, 2, 3, 2, 2],
+        "populationRanking": [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3],
+        "sampleRanking": [],
+        "userClass": 4
+    },
+    {
+        "population": [5, 5, 5, 5, 4],
+        "sample": [2, 2, 2, 2, 4],
+        "populationRanking": [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3],
+        "sampleRanking": [],
+        "userClass": 4
+    },
+    {
+        "population": [8, 4, 4, 4, 4],
+        "sample": [4, 2, 2, 2, 2],
+        "populationRanking": [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4],
+        "sampleRanking": [],
+        "userClass": 2
+    },
+    {
+        "population": [8, 4, 4, 4, 4],
+        "sample": [3, 2, 3, 2, 2],
+        "populationRanking": [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4],
+        "sampleRanking": [],
+        "userClass": 2
+    },
+    {
+        "population": [8, 4, 4, 4, 4],
+        "sample": [3, 2, 2, 2, 3],
+        "populationRanking": [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4],
+        "sampleRanking": [],
+        "userClass": 2
+    },
+    {
+        "population": [5, 5, 5, 5, 4],
+        "sample": [],
+        "populationRanking": [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4],
+        "sampleRanking": [],
+        "userClass": 1
+    },
+    {
+        "population": [5, 5, 5, 5, 4],
+        "sample": [],
+        "populationRanking": [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4],
+        "sampleRanking": [],
+        "userClass": 4
+    },
+    {
+        "population": [5, 5, 5, 5, 4],
+        "sample": [],
+        "populationRanking": [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3],
+        "sampleRanking": [],
+        "userClass": 1
+    },
+    {
+        "population": [5, 5, 5, 5, 4],
+        "sample": [],
+        "populationRanking": [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3],
+        "sampleRanking": [],
+        "userClass": 4
+    },
+    {
+        "population": [8, 4, 4, 4, 4],
+        "sample": [],
+        "populationRanking": [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4],
+        "sampleRanking": [],
+        "userClass": 2
+    },
+    {
+        "population": [8, 4, 4, 4, 4],
+        "sample": [],
+        "populationRanking": [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4],
+        "sampleRanking": [],
+        "userClass": 0
+    },
+    {
+        "population": [8, 4, 4, 4, 4],
+        "sample": [],
+        "populationRanking": [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 0, 0, 0],
+        "sampleRanking": [],
+        "userClass": 2
+    },
+    {
+        "population": [8, 4, 4, 4, 4],
+        "sample": [],
+        "populationRanking": [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 0, 0, 0],
+        "sampleRanking": [],
+        "userClass": 0
+    },
+    {
+        "population": [9, 5, 5, 4, 1],
+        "sample": [],
+        "populationRanking": [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 4, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2],
+        "sampleRanking": [],
+        "userClass": 4
+    },
+    {
+        "population": [9, 5, 5, 4, 1],
+        "sample": [],
+        "populationRanking": [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 4],
+        "sampleRanking": [],
+        "userClass": 4
+    },
+    {
+        "population": [9, 5, 5, 4, 1],
+        "sample": [],
+        "populationRanking": [4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2],
+        "sampleRanking": [],
+        "userClass": 4
+    },
+];
 
 const COLORS = [
     "#f44336",
@@ -32,6 +189,15 @@ const COLORS = [
     "#ff9800",
     "#9c27b0",
 ];
+
+const CONSISTENCY_INDICES = {
+    7: 2,
+    10: 5,
+    18: 13,
+    21: 16,
+};
+
+let qColors = [];
 
 const SVG_DEFS = `<defs>
 <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5"
@@ -63,21 +229,33 @@ function initializeSamplePositions() {
     }
 }
 
-function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObserved, isDemo) { // All boolean except for isRanked = {"population": Boolean, "sample": Boolean}.
+function initializeColors() {
+    qColors = [];
+    for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+        if (Object.keys(CONSISTENCY_INDICES).includes("" + i)) {
+            qColors[i] = qColors[CONSISTENCY_INDICES[i]];
+        } else {
+            qColors[i] = shuffleList(COLORS);
+        }
+    }
+}
+
+function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObserved, isDemo, index) { // All boolean except for isRanked = {"population": Boolean, "sample": Boolean}.
     // console.log("here", questionId);
-    const statsContainer = document.getElementById(questionId + "-stats-container");
+    // const statsContainer = document.getElementById(questionId + "-stats-container");
     const questionHeader = document.getElementById(questionId + "-question-heading");
     const questionTextP = document.getElementById(questionId + "-question-text");
     const contextTextP = document.getElementById(questionId + "-context-text");
     const questionGridContainer = document.getElementById(questionId + "-question-grid-container");
-    const itemId = "i" + (Math.floor(N_ITEMS * Math.random()));
-    const population = ITEMS[itemId]["population"];
-    const sample = ITEMS[itemId]["sample"];
-    const sampleRanking = ITEMS[itemId]["sampleRanking"];
-    const populationRanking = ITEMS[itemId]["populationRanking"];
-    const colors = shuffleList(COLORS); // Shuffle colors to avoid any correlations between groups and colors.
+    // const itemId = "i" + (Math.floor(N_ITEMS * Math.random()));
+    const population = ITEMS[index]["population"];
+    const sample = ITEMS[index]["sample"];
+    const sampleRanking = ITEMS[index]["sampleRanking"];
+    const populationRanking = ITEMS[index]["populationRanking"];
+    // const colors = shuffleList(COLORS); // Shuffle colors to avoid any correlations between groups and colors.
+    const colors = qColors[parseInt(questionId.split("-")[1])];
     let userClass, questionText = "", contextText = "";
-    let bothRanked = false;
+    // let bothRanked = false;
     if (isDemo) {
         questionHeader.innerHTML = "Demo";
     }
@@ -103,7 +281,7 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
         }
         contextTextP.innerHTML = contextText;
         if (isDemo) {
-            questionText += `You are requested to construct a ${isRanked["sample"] ? " <b>ranked</b>" : "n <b>unranked</b>"} sample of 12 items, each ${knownPopulation ? "drawn from the population" : "belonging to one of the five (5) classes"} shown above. Add an item to the sample by clicking on it ${knownPopulation ? "" : "s class"} (sample items are removed by simply clicking on them).`;
+            questionText += `You are requested to construct a${isRanked["sample"] ? " <b>ranked</b>" : "n <b>unranked</b>"} sample of 12 items, each ${knownPopulation ? "drawn from the population" : "belonging to one of the five (5) classes"} shown above. Add an item to the sample by clicking on it ${knownPopulation ? "" : "s class"} (sample items are removed by simply clicking on them).`;
         } else {
             questionText += `...construct a${isRanked["sample"] ? " <b>ranked</b>" : "n <b>unranked</b>"} sample which is <b>as diverse as possible</b>.`
         }
@@ -123,7 +301,7 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
 			drawUnrankedSet(questionId, "sample", [SAMPLE_SIZE], ["#ffffff"], "Sample", "#808080");
 		}
         if (knownPopulation) {
-            console.log("population:", population);
+            // console.log("population:", population);
             addOnClickEvents(questionId, population, addToSample);
         }
         return;
@@ -286,7 +464,7 @@ function addToSample(event) { // TODO Consider adding a number on top of each el
     const sampleId = sampleIdPrefix + "-Sample-0-" + minEmptyPosition;
     const currentSampleElement = document.getElementById(sampleId);
     let hasListener, populationPrefix = sampleIdPrefix + "-Population-";
-    console.log(element.id, sampleId);
+    // console.log(element.id, sampleId);
     currentSampleElement.style.fill = element.style.fill;
     currentSampleElement.style.stroke = "white";
     element.style.fillOpacity = "0.5";
@@ -300,7 +478,7 @@ function addToSample(event) { // TODO Consider adding a number on top of each el
     minEmptyPosition = getMinEmptyPosition();
     if (minEmptyPosition === SAMPLE_SIZE) {
         // currentResponse = {};
-        console.log("Just emptied:", currentResponse);
+        // console.log("Just emptied:", currentResponse);
 		const allPopulationElements = document.querySelectorAll("[id^='" + populationPrefix + "']");
         const resp = [];
         for (const samplePos in chosenItems) {
@@ -311,7 +489,7 @@ function addToSample(event) { // TODO Consider adding a number on top of each el
         }
         // console.log("resp:", resp);
         currentResponse = {"response": resp};
-        console.log(currentResponse);
+        // console.log(currentResponse);
 		for (const populationElement of allPopulationElements) {
             // if (!populationElement.id.includes("Population")) {
             //     continue;
@@ -336,7 +514,7 @@ function removeFromSample(event) {
     const splitPopPrefix = sampleElement.id.split("-").filter(Boolean);
     const populationPrefix = splitPopPrefix[0] + "-" + splitPopPrefix[1] + "-Population-";
     const position = parseInt(sampleElement.id.split(/Q-\d+-Sample-0-/g)[1]);
-    console.log(splitPopPrefix);
+    // console.log(splitPopPrefix);
     if (canProceed) {
         canProceed = false;
         const submitButton = document.getElementById(splitPopPrefix[0] + "-" + splitPopPrefix[1] + "-submit-button");
@@ -454,7 +632,7 @@ function drawRankedList(questionId, set, distribution, ranking, colors, label, b
     const HEIGHT = 0.24 * VIEWBOX_HEIGHT;
 	const WIDTH = VIEWBOX_WIDTH / N;
 	let rect, line, firstLabel, lastLabel, overallLabel, firstLabelText, lastLabelText, overallLabelText, currentX = 0, currentY = VIEWBOX_HEIGHT / 2 - HEIGHT / 2, lineY = VIEWBOX_HEIGHT / 2 - HEIGHT;
-    console.log("distribution:", distribution);
+    // console.log("distribution:", distribution);
 	for (let i = 0; i < distribution.length; i++) {
 		for (j = 0; j < distribution[i]; j++) {
 			rect = document.createElementNS(SVG_NS, "rect");
@@ -590,13 +768,21 @@ function initializeQuestions(condition1, condition2) {
             isUserIn = condition2["isUserIn"];
             isObserved = condition2["isObserved"];
         }
-        generateQuestion(nextQuestionId, knownPopulation, isRanked, isUserIn, isObserved, isDemo);
-		// generateQuestion(nextQuestionId, (Math.random() < 0.5), {"population": (Math.random() < 0.5), "sample": (Math.random() < 0.5)}, (Math.random() < 0.5), (Math.random() < 0.5), isDemo);
+        generateQuestion(nextQuestionId, knownPopulation, isRanked, isUserIn, isObserved, isDemo, i % (TOTAL_QUESTIONS / 2));
 		drawProgressCircle(nextQuestionId);
     }
 }
 
+function getConditionIndex(i) {
+    if (Object.keys(CONSISTENCY_INDICES).includes(i)) {
+        return CONSISTENCY_INDICES[i];
+    }
+    return i;
+}
+
 function init() {
+    initializeColors();
+    // console.log(qColors);
     const initBox = document.createElement("div");
     initBox.id = "Q-start";
     initBox.classList.add("question-row-container");

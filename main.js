@@ -21,7 +21,7 @@ function proceedToNext() {
 			studyStart = false;
 			previous = document.getElementById("Q-start");
 			nextId = "Q-" + answeredQuestions;
-			console.log(nextId);
+			// console.log(nextId);
 			canProceed = false;
 		} else if (answeredQuestions === TOTAL_QUESTIONS) {
 			nextId = "Q-end";
