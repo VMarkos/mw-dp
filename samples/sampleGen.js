@@ -60,7 +60,7 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
         if (isUserIn) {
             contextText += "Assume you belong to the class shown right. ";
             // userClass = Math.floor(population.length * Math.random());
-            userClass = item["userClass"];
+            // userClass = item["userClass"];
             addUserClass(questionId, colors[userClass]);
         }
         if (isDemo) {
@@ -94,7 +94,7 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
     addDiversitySlider(questionId);
     if (isUserIn) {
         contextText += "Assume you belong to the class shown right. ";
-        userClass = Math.floor(population.length * Math.random());
+        // userClass = Math.floor(population.length * Math.random());
         addUserClass(questionId, colors[userClass]);
     }
     questionText += `${knownPopulation ? "...h" : "H"}ow diverse would you consider the ${isRanked["sample"] ? "<b>ranked</b>" : "<b>unranked</b>"} sample shown right to be?`;
