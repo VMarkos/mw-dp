@@ -31,7 +31,7 @@ body {
 .question-row-container {
 	display: flex;
 	flex-direction: column;
-	transition-duration: 500ms;
+	transition-duration: 400ms;
 }
 
 .question-grid-container {
