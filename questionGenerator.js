@@ -4,8 +4,13 @@ const SAMPLE_SIZE = 12;
 const TOTAL_QUESTIONS = 22;
 const SAMPLE_TOOLTIP = "Click to remove";
 const POPULATION_TOOLTIP = "Click to add";
+let CONDITIONS_PAIR;
 let canProceed = true;
 let studyStart = true;
+
+let NEXT_TASK;
+
+const API_URL = "http://127.0.0.1:5001/ouc---diversity-perception/us-central1/app/api";
 
 const RESPONSES = {};
 let currentResponse = {};
@@ -25,162 +30,163 @@ let currentResponse = {};
 //     },
 // };
 
-const ITEMS = [
-    {
-        "population": [5, 5, 5, 5, 4],
-        "sample": [3, 2, 3, 2, 2],
-        "populationRanking": [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4],
-        "sampleRanking": [],
-        "userClass": 1
-    },
-    {
-        "population": [5, 5, 5, 5, 4],
-        "sample": [5, 1, 2, 2, 2],
-        "populationRanking": [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4],
-        "sampleRanking": [],
-        "userClass": 1
-    },
-    {
-        "population": [5, 5, 5, 5, 4],
-        "sample": [3, 2, 3, 2, 2],
-        "populationRanking": [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4],
-        "sampleRanking": [],
-        "userClass": 4
-    },
-    {
-        "population": [5, 5, 5, 5, 4],
-        "sample": [2, 2, 2, 2, 4],
-        "populationRanking": [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4],
-        "sampleRanking": [],
-        "userClass": 4
-    },
-    {
-        "population": [5, 5, 5, 5, 4],
-        "sample": [3, 2, 3, 2, 2],
-        "populationRanking": [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3],
-        "sampleRanking": [],
-        "userClass": 1
-    },
-    {
-        "population": [5, 5, 5, 5, 4],
-        "sample": [5, 2, 1, 2, 2],
-        "populationRanking": [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3],
-        "sampleRanking": [],
-        "userClass": 1
-    },
-    {
-        "population": [5, 5, 5, 5, 4],
-        "sample": [3, 2, 3, 2, 2],
-        "populationRanking": [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3],
-        "sampleRanking": [],
-        "userClass": 4
-    },
-    {
-        "population": [5, 5, 5, 5, 4],
-        "sample": [2, 2, 2, 2, 4],
-        "populationRanking": [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3],
-        "sampleRanking": [],
-        "userClass": 4
-    },
-    {
-        "population": [8, 4, 4, 4, 4],
-        "sample": [4, 2, 2, 2, 2],
-        "populationRanking": [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4],
-        "sampleRanking": [],
-        "userClass": 2
-    },
-    {
-        "population": [8, 4, 4, 4, 4],
-        "sample": [3, 2, 3, 2, 2],
-        "populationRanking": [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4],
-        "sampleRanking": [],
-        "userClass": 2
-    },
-    {
-        "population": [8, 4, 4, 4, 4],
-        "sample": [3, 2, 2, 2, 3],
-        "populationRanking": [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4],
-        "sampleRanking": [],
-        "userClass": 2
-    },
-    {
-        "population": [5, 5, 5, 5, 4],
-        "sample": [],
-        "populationRanking": [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4],
-        "sampleRanking": [],
-        "userClass": 1
-    },
-    {
-        "population": [5, 5, 5, 5, 4],
-        "sample": [],
-        "populationRanking": [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4],
-        "sampleRanking": [],
-        "userClass": 4
-    },
-    {
-        "population": [5, 5, 5, 5, 4],
-        "sample": [],
-        "populationRanking": [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3],
-        "sampleRanking": [],
-        "userClass": 1
-    },
-    {
-        "population": [5, 5, 5, 5, 4],
-        "sample": [],
-        "populationRanking": [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3],
-        "sampleRanking": [],
-        "userClass": 4
-    },
-    {
-        "population": [8, 4, 4, 4, 4],
-        "sample": [],
-        "populationRanking": [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4],
-        "sampleRanking": [],
-        "userClass": 2
-    },
-    {
-        "population": [8, 4, 4, 4, 4],
-        "sample": [],
-        "populationRanking": [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4],
-        "sampleRanking": [],
-        "userClass": 0
-    },
-    {
-        "population": [8, 4, 4, 4, 4],
-        "sample": [],
-        "populationRanking": [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 0, 0, 0],
-        "sampleRanking": [],
-        "userClass": 2
-    },
-    {
-        "population": [8, 4, 4, 4, 4],
-        "sample": [],
-        "populationRanking": [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 0, 0, 0],
-        "sampleRanking": [],
-        "userClass": 0
-    },
-    {
-        "population": [9, 5, 5, 4, 1],
-        "sample": [],
-        "populationRanking": [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 4, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2],
-        "sampleRanking": [],
-        "userClass": 4
-    },
-    {
-        "population": [9, 5, 5, 4, 1],
-        "sample": [],
-        "populationRanking": [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 4],
-        "sampleRanking": [],
-        "userClass": 4
-    },
-    {
-        "population": [9, 5, 5, 4, 1],
-        "sample": [],
-        "populationRanking": [4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2],
-        "sampleRanking": [],
-        "userClass": 4
-    },
-];
+let ITEMS = [];
+// [
+//     {
+//         "population": [5, 5, 5, 5, 4],
+//         "sample": [3, 2, 3, 2, 2],
+//         "populationRanking": [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4],
+//         "sampleRanking": [],
+//         "userClass": 1
+//     },
+//     {
+//         "population": [5, 5, 5, 5, 4],
+//         "sample": [5, 1, 2, 2, 2],
+//         "populationRanking": [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4],
+//         "sampleRanking": [],
+//         "userClass": 1
+//     },
+//     {
+//         "population": [5, 5, 5, 5, 4],
+//         "sample": [3, 2, 3, 2, 2],
+//         "populationRanking": [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4],
+//         "sampleRanking": [],
+//         "userClass": 4
+//     },
+//     {
+//         "population": [5, 5, 5, 5, 4],
+//         "sample": [2, 2, 2, 2, 4],
+//         "populationRanking": [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4],
+//         "sampleRanking": [],
+//         "userClass": 4
+//     },
+//     {
+//         "population": [5, 5, 5, 5, 4],
+//         "sample": [3, 2, 3, 2, 2],
+//         "populationRanking": [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3],
+//         "sampleRanking": [],
+//         "userClass": 1
+//     },
+//     {
+//         "population": [5, 5, 5, 5, 4],
+//         "sample": [5, 2, 1, 2, 2],
+//         "populationRanking": [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3],
+//         "sampleRanking": [],
+//         "userClass": 1
+//     },
+//     {
+//         "population": [5, 5, 5, 5, 4],
+//         "sample": [3, 2, 3, 2, 2],
+//         "populationRanking": [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3],
+//         "sampleRanking": [],
+//         "userClass": 4
+//     },
+//     {
+//         "population": [5, 5, 5, 5, 4],
+//         "sample": [2, 2, 2, 2, 4],
+//         "populationRanking": [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3],
+//         "sampleRanking": [],
+//         "userClass": 4
+//     },
+//     {
+//         "population": [8, 4, 4, 4, 4],
+//         "sample": [4, 2, 2, 2, 2],
+//         "populationRanking": [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4],
+//         "sampleRanking": [],
+//         "userClass": 2
+//     },
+//     {
+//         "population": [8, 4, 4, 4, 4],
+//         "sample": [3, 2, 3, 2, 2],
+//         "populationRanking": [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4],
+//         "sampleRanking": [],
+//         "userClass": 2
+//     },
+//     {
+//         "population": [8, 4, 4, 4, 4],
+//         "sample": [3, 2, 2, 2, 3],
+//         "populationRanking": [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4],
+//         "sampleRanking": [],
+//         "userClass": 2
+//     },
+//     {
+//         "population": [5, 5, 5, 5, 4],
+//         "sample": [],
+//         "populationRanking": [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4],
+//         "sampleRanking": [],
+//         "userClass": 1
+//     },
+//     {
+//         "population": [5, 5, 5, 5, 4],
+//         "sample": [],
+//         "populationRanking": [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4],
+//         "sampleRanking": [],
+//         "userClass": 4
+//     },
+//     {
+//         "population": [5, 5, 5, 5, 4],
+//         "sample": [],
+//         "populationRanking": [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3],
+//         "sampleRanking": [],
+//         "userClass": 1
+//     },
+//     {
+//         "population": [5, 5, 5, 5, 4],
+//         "sample": [],
+//         "populationRanking": [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3],
+//         "sampleRanking": [],
+//         "userClass": 4
+//     },
+//     {
+//         "population": [8, 4, 4, 4, 4],
+//         "sample": [],
+//         "populationRanking": [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4],
+//         "sampleRanking": [],
+//         "userClass": 2
+//     },
+//     {
+//         "population": [8, 4, 4, 4, 4],
+//         "sample": [],
+//         "populationRanking": [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4],
+//         "sampleRanking": [],
+//         "userClass": 0
+//     },
+//     {
+//         "population": [8, 4, 4, 4, 4],
+//         "sample": [],
+//         "populationRanking": [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 0, 0, 0],
+//         "sampleRanking": [],
+//         "userClass": 2
+//     },
+//     {
+//         "population": [8, 4, 4, 4, 4],
+//         "sample": [],
+//         "populationRanking": [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 0, 0, 0],
+//         "sampleRanking": [],
+//         "userClass": 0
+//     },
+//     {
+//         "population": [9, 5, 5, 4, 1],
+//         "sample": [],
+//         "populationRanking": [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 4, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2],
+//         "sampleRanking": [],
+//         "userClass": 4
+//     },
+//     {
+//         "population": [9, 5, 5, 4, 1],
+//         "sample": [],
+//         "populationRanking": [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 4],
+//         "sampleRanking": [],
+//         "userClass": 4
+//     },
+//     {
+//         "population": [9, 5, 5, 4, 1],
+//         "sample": [],
+//         "populationRanking": [4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2],
+//         "sampleRanking": [],
+//         "userClass": 4
+//     },
+// ];
 
 const COLORS = [
     "#f44336",
@@ -250,6 +256,7 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
     // const itemId = "i" + (Math.floor(N_ITEMS * Math.random()));
     const population = ITEMS[index]["population"];
     const sample = ITEMS[index]["sample"];
+    // console.log(`sample as in ITEMS[${index}]:`, sample);
     const sampleRanking = ITEMS[index]["sampleRanking"];
     const populationRanking = ITEMS[index]["populationRanking"];
     let userClass = ITEMS[index]["userClass"];
@@ -271,7 +278,7 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
 	// }
 	if (!isObserved) {
         if (isUserIn) {
-            contextText += "Assume you belong to the class shown right. ";
+            contextText += "Assume you belong to the class shown on the right. ";
             // userClass = Math.floor(population.length * Math.random());
             addUserClass(questionId, colors[userClass]);
         }
@@ -350,18 +357,36 @@ function addClassToSample(event) {
     // console.log(classElement.style.background);
     currentSampleElement.style.fill = classElement.style.fill;
     currentSampleElement.style.stroke = "white";
+    chosenItems[sampleId] = classElement.id;
     samplePositions[minEmptyPosition] = true;
     currentSampleElement.style.cursor = "pointer";
+    currentSampleElement.setAttribute("popClass", classElement.getAttribute("popClass"));
     currentSampleElement.addEventListener("mouseup", removeClassFromSample);
     minEmptyPosition = getMinEmptyPosition();
     // console.log(populationPrefix);
     if (minEmptyPosition === SAMPLE_SIZE) {
+        // currentResponse = {};
+        // console.log("Just emptied:", currentResponse, chosenItems);
 		const allPopulationElements = document.querySelectorAll("[id^='" + populationPrefix + "']");
+        const resp = [];
+        for (const samplePos in chosenItems) {
+            resp.push({
+                "samplePosition": parseInt(samplePos.split("-")[4]),
+                "populationClass": parseInt(document.getElementById(chosenItems[samplePos]).getAttribute("popClass")),
+                "populationPosition": -1,
+            });   
+        }
+        // console.log("resp:", resp);
+        currentResponse = {"response": resp};        
+		// const allPopulationElements = document.querySelectorAll("[id^='" + populationPrefix + "']");
 		for (const populationElement of allPopulationElements) {
             populationElement.removeEventListener("mouseup", addClassToSample);
             populationElement.style.cursor = "auto";
             populationElement.style.opacity = "0.5";
 		}
+        const submitButton = document.getElementById(sampleIdPrefix + "-submit-button");
+        submitButton.classList.remove("inactive");
+        canProceed = true;
 	}
 }
 
@@ -370,16 +395,23 @@ function removeClassFromSample(event) {
     const splitPopPrefix = sampleElement.id.split("-").filter(Boolean);
     const populationPrefix = splitPopPrefix[0] + "-" + splitPopPrefix[1] + "-Population-";
     const position = parseInt(sampleElement.id.split(/Q-\d+-Sample-0-/g)[1]);
+    // console.log(canProceed)
+    if (canProceed) {
+        const submitButton = document.getElementById(splitPopPrefix[0] + "-" + splitPopPrefix[1] + "-submit-button");
+        submitButton.classList.add("inactive");
+        canProceed = false;
+    }
     // console.log("position:", position);
     let justEmptied = getMinEmptyPosition() === SAMPLE_SIZE;
-    let hasListener;
+    // let hasListener;
     sampleElement.style.cursor = "auto";
     sampleElement.style.fill = "#ffffff";
     sampleElement.style.stroke = "#808080";
     sampleElement.removeEventListener("mouseup", removeClassFromSample);
     samplePositions[position] = false;
-    minEmptyPosition = getMinEmptyPosition();
+    // minEmptyPosition = getMinEmptyPosition();
     // console.log(populationPrefix);
+    // console.log(splitPopPrefix);
     if (justEmptied) {
         const allPopulationElements = document.querySelectorAll("[id^='" + populationPrefix + "'");
         for (const popElement of allPopulationElements) {
@@ -395,12 +427,15 @@ function drawClassButtonPanel(questionId, set, colors) {
     let classButton;
     const classButtonContainer = document.createElement("div");
     classButtonContainer.classList.add("add-class-button-container");
-    for (const color of colors) {
+    let color;
+    for (let i = 0; i < colors.length; i++) {
+        color = colors[i];
         classButton = document.createElement("div");
         classButton.classList.add("add-class-button");
         classButton.style.fill = color;
         classButton.style.background = color;
-        classButton.id = questionId + "-Population-class-button";
+        classButton.id = questionId + "-Population-class-button-" + i;
+        classButton.setAttribute("popClass", i);
         classButton.addEventListener("mouseup", addClassToSample);
         classButtonContainer.appendChild(classButton);
     }
@@ -479,13 +514,14 @@ function addToSample(event) { // TODO Consider adding a number on top of each el
     minEmptyPosition = getMinEmptyPosition();
     if (minEmptyPosition === SAMPLE_SIZE) {
         // currentResponse = {};
-        // console.log("Just emptied:", currentResponse);
+        // console.log("Just emptied:", currentResponse, chosenItems);
 		const allPopulationElements = document.querySelectorAll("[id^='" + populationPrefix + "']");
         const resp = [];
         for (const samplePos in chosenItems) {
             resp.push({
                 "samplePosition": parseInt(samplePos.split("-")[4]),
                 "populationClass": parseInt(document.getElementById(chosenItems[samplePos]).getAttribute("popClass")),
+                "populationPosition": parseInt(document.getElementById(chosenItems[samplePos]).getAttribute("popPos")),
             });   
         }
         // console.log("resp:", resp);
@@ -578,6 +614,7 @@ function drawUnrankedSet(questionId, set, distribution, colors, label, borderCol
     container.setAttribute("xmlns", XMLNS);
     container.setAttribute("viewBox", "0 0 " + VIEWBOX_WIDTH + " " + VIEWBOX_HEIGHT);
     container.innerHTML = SVG_DEFS;
+    // console.log("distribution:", distribution);
     const N = distribution.reduce((a, b) => a + b);
     const R = VIEWBOX_HEIGHT / 2;
     const r = 0.8 * R;
@@ -646,6 +683,7 @@ function drawRankedList(questionId, set, distribution, ranking, colors, label, b
 			rect.setAttribute("width", WIDTH);
 			rect.setAttribute("height", HEIGHT);
             rect.setAttribute("popClass", ranking[currentX]);
+            rect.setAttribute("popPos", j);
 			currentX++;
 			container.appendChild(rect);
             // console.log("drawRankedList", rect.id);
@@ -769,7 +807,7 @@ function initializeQuestions(condition1, condition2) {
             isUserIn = condition2["isUserIn"];
             isObserved = condition2["isObserved"];
         }
-        generateQuestion(nextQuestionId, knownPopulation, isRanked, isUserIn, isObserved, isDemo, i % (TOTAL_QUESTIONS / 2));
+        generateQuestion(nextQuestionId, knownPopulation, isRanked, isUserIn, isObserved, isDemo, i);
 		drawProgressCircle(nextQuestionId);
     }
 }
@@ -782,6 +820,13 @@ function getConditionIndex(i) {
 }
 
 function init() {
+    getNextTask().then(() => {
+        // console.log("then");
+        taskInit();
+    });
+}
+
+function taskInit() {
     initializeColors();
     // console.log(qColors);
     const initBox = document.createElement("div");
@@ -827,26 +872,95 @@ function init() {
     document.body.append(initBox);
 }
 
+function parseCon(con) {
+    const sCon = con.split("_").filter(Boolean);
+    return {
+        knownPopulation: sCon[0] === "t",
+        isRanked: {
+            population: sCon[1][0] === "t",
+            sample: sCon[1][1] === "t",
+        },
+        isUserIn: sCon[2] === "t",
+        isObserved: sCon[3] === "t",
+    };
+}
+
 function startStudy() {
-    const condition1 = {
-        knownPopulation: true,
-        isRanked: {
-            population: true,
-            sample: false,
-        },
-        isUserIn: true,
-        isObserved: true,
-    };
-    const condition2 = {
-        knownPopulation: true,
-        isRanked: {
-            population: true,
-            sample: false,
-        },
-        isUserIn: true,
-        isObserved: false,
-    };
+    TASK_ID = NEXT_TASK["taskId"];
+    const condition1 = parseCon(NEXT_TASK["pair0"]);
+    const condition2 = parseCon(NEXT_TASK["pair1"]);
+    CONDITIONS_PAIR = NEXT_TASK["pair0"] + "|" + NEXT_TASK["pair1"];
+    ITEMS = NEXT_TASK["instances0"].concat(NEXT_TASK["instances1"]);
+    // console.log(TASK_ID, condition1, condition2, ITEMS);
+    // const condition1 = {
+    //     knownPopulation: true,
+    //     isRanked: {
+    //         population: true,
+    //         sample: false,
+    //     },
+    //     isUserIn: true,
+    //     isObserved: true,
+    // };
+    // const condition2 = {
+    //     knownPopulation: true,
+    //     isRanked: {
+    //         population: true,
+    //         sample: false,
+    //     },
+    //     isUserIn: true,
+    //     isObserved: false,
+    // };
     initializeQuestions(condition1, condition2);
+}
+
+function getNextTask() {
+    return new Promise((resolve, reject) => {
+        const req = new XMLHttpRequest();
+        req.addEventListener("error", (event) => {console.log("Error:", event);});
+        req.addEventListener("load", () => {
+            if (req.status === 200) {
+                NEXT_TASK = JSON.parse(req.response);
+                // console.log(req, req.response);
+                resolve();
+            }
+        })
+        req.open("GET", API_URL + "/next-task");
+        req.send();
+    });
+}
+
+function postResponse() {
+    addLoadingScreen();
+    const req = new XMLHttpRequest();
+    req.addEventListener("error", (event) => {console.log("Error:", event);});
+    req.addEventListener("load", () => {
+        if (req.status === 200) {
+            console.log("Success!");
+            setTimeout(() => {
+                document.getElementsByClassName("load-screen-blocker")[0].remove();
+            }, 5000);
+        }
+    });
+    req.open("POST", API_URL + "/post-task");
+    req.setRequestHeader("Content-Type", "application/json");
+    req.setRequestHeader("Accept", "application/json");
+    req.send(JSON.stringify({
+        conditionsPair: CONDITIONS_PAIR,
+        taskId: TASK_ID,
+        colors: qColors,
+        response: RESPONSES,
+    }));
+}
+
+function addLoadingScreen() {
+    const blocker = document.createElement("div");
+    blocker.classList.add("load-screen-blocker");
+    const doNotClose = document.createElement("div");
+    doNotClose.classList.add("question-container");
+    doNotClose.innerHTML = `<h2>Wait!</h2>
+    <p><b>Do not close this tab</b> until prompted to do so!</p>`;
+    blocker.append(doNotClose);
+    document.body.append(blocker);
 }
 
 window.addEventListener("load", function() {init();});

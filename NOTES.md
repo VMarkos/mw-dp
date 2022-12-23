@@ -14,8 +14,8 @@ Various study materials.
 [x] **Observed, known ranked/unranked population**: How diverse would you consider the (ranked/unranked) sample shown...
 
 ## TODOs
-[ ] Create a walkthrough for each condition;
-[ ] Generate a DB and the corresponding API to store the study's results;
+[x] Create a walkthrough for each condition;
+[x] Generate a DB and the corresponding API to store the study's results;
 
 ## Models
 1. You have a table with all pairs of conditions, so for each participant you pick up a pair:
@@ -31,7 +31,7 @@ Study flow:
 1. On page load:
     * GET request to:
         * create a new task in the DB;
-        * initialize responses to {};
+        * initialize responses -> "taskId" to {};
         * generate instances and save them to task info;
         * return the task's uuid as a response;
 2. On survey end:
@@ -43,22 +43,52 @@ Response Data Structure:
 
 ```javascript
 {
+    "conditionsPair": "f_ff_f_f|f_ff_f_t",
     "taskId": 5, // possibly just an int or a uuid.
+    "colors": [
+        [<"list of colors">],
+        [<"list of colors">],
+    ],
     "response": {
         "Q-0": {
-            "colors": [2, 1, 4, 0, 3],
             "response": 45,
             "responseDuration": 1023268,
         },
         "Q-1": {
-            "colors": [2, 1, 4, 0, 3],
             "response": [
-                {"samplePosition": 0, "populationClass": 3},
-                {"samplePosition": 1, "populationClass": 1},
+                {"samplePosition": 0, "populationClass": 3, "populationPosition": 0},
+                {"samplePosition": 1, "populationClass": 1, "populationPosition": 2},
                 ...
             ],
             "responseDuration": 0123484,
         }
     },
+}
+```
+
+`responses` Collection Structure:
+
+```javascript
+{
+    "f_ff_f_f|f_ff_f_t": {
+        "responses": {
+            "<taskId (uuid)>": {"<Response Object, as above>"},
+            "<taskId (uuid)>": {"<Response Object, as above>"},
+            ...
+        },
+    },
+    ...
+}
+```
+
+`next-task` Structure:
+
+```javascript
+{
+    "taskId": 123,
+    "pair0": "f_ff_f_f",
+    "pair1": "f_ff_f_t",
+    "instances0": ["<Instances>"],
+    "instances1": ["<Instances>"],
 }
 ```

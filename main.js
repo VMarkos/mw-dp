@@ -17,6 +17,7 @@ function nextQuestion(previous, next) {
 
 function proceedToNext() {
 	if (canProceed) {
+		canProceed = false;
 		let previous = document.getElementById("Q-" + answeredQuestions);
 		let nextId;
 		answeredQuestions++;
@@ -26,19 +27,17 @@ function proceedToNext() {
 			previous = document.getElementById("Q-start");
 			nextId = "Q-" + answeredQuestions;
 			// console.log(nextId);
-			canProceed = false;
 		} else if (answeredQuestions === TOTAL_QUESTIONS) {
 			nextId = "Q-end";
 			RESPONSES["Q-" + (answeredQuestions - 1)] = {
-				"colors": qColors,
 				"response": (typeof currentResponse["response"] === "object") ? [...currentResponse["response"]] : parseInt(currentResponse["response"]),
 				"responseDuration": performance.now() - prevTime,
 			};
 			chosenItems = {};
+            postResponse();
 		} else {
 			nextId = "Q-" + answeredQuestions;
 			RESPONSES["Q-" + (answeredQuestions - 1)] = {
-				"colors": qColors,
 				"response": (typeof currentResponse["response"] === "object") ? [...currentResponse["response"]] : parseInt(currentResponse["response"]),
 				"responseDuration": performance.now() - prevTime,
 			};
@@ -52,7 +51,9 @@ function proceedToNext() {
 
 function endStudy() {
 	const resp = {
+		conditionsPair: CONDITIONS_PAIR,
 		taskId: TASK_ID,
+		colors: qColors,
 		response: RESPONSES,
 	}
 	// console.log("Responses:", RESPONSES);
