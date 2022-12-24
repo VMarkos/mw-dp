@@ -283,15 +283,15 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
             addUserClass(questionId, colors[userClass]);
         }
         if (isDemo) {
-            contextText += `Also right, you are presented with ${knownPopulation ? isRanked["population"] ? "a <b>ranked</b> population with items from" : "an <b>unrakned</b> population with items from" : ""} five classes, denoted by color...`;
+            contextText += `You are ${isUserIn ? "also " : ""}presented with ${knownPopulation ? isRanked["population"] ? "a <b>ranked</b> population of items from" : "an <b>unrakned</b> population of items from" : ""} five classes, denoted by their color.`;
         } else {
-            contextText += `${isUserIn || isDemo ? "Then, g" : "G"}iven the ${knownPopulation ? isRanked["population"] ? "<b>ranked</b> population" : "<b>unranked</b> population" : "classes"}, ${isUserIn ? "also ": ""}shown right...`;
+            contextText += `Given the ${knownPopulation ? isRanked["population"] ? "<b>ranked</b> population" : "<b>unranked</b> population" : "classes"}, ${isUserIn ? "also ": ""}shown on the right.`;
         }
         contextTextP.innerHTML = contextText;
         if (isDemo) {
             questionText += `You are requested to construct a${isRanked["sample"] ? " <b>ranked</b>" : "n <b>unranked</b>"} sample of 12 items, each ${knownPopulation ? "drawn from the population" : "belonging to one of the five (5) classes"} shown above. Add an item to the sample by clicking on it ${knownPopulation ? "" : "s class"} (sample items are removed by simply clicking on them).`;
         } else {
-            questionText += `...construct a${isRanked["sample"] ? " <b>ranked</b>" : "n <b>unranked</b>"} sample which is <b>as diverse as possible</b>.`
+            questionText += `Construct a${isRanked["sample"] ? " <b>ranked</b>" : "n <b>unranked</b>"} sample which is <b>as diverse as possible</b>.`
         }
         questionTextP.innerHTML = questionText;
         if (!knownPopulation) {
@@ -316,20 +316,20 @@ function generateQuestion(questionId, knownPopulation, isRanked, isUserIn, isObs
 	}
     addDiversitySlider(questionId);
     if (isUserIn) {
-        contextText += "Assume you belong to the class shown right. ";
+        contextText += "Assume you belong to the class shown on the right. ";
         // userClass = Math.floor(population.length * Math.random());
         addUserClass(questionId, colors[userClass]);
     }
-    questionText += `${knownPopulation ? "...h" : "H"}ow diverse would you consider the ${isRanked["sample"] ? "<b>ranked</b>" : "<b>unranked</b>"} sample shown right to be?`;
+    questionText += `How diverse would you consider the ${isRanked["sample"] ? "<b>ranked</b>" : "<b>unranked</b>"} sample shown on the right to be?`;
     if (isDemo) {
-        questionText += ` Provide your estimation by drawing the slider shown below (right means more diverse while left means less).`;
+        questionText += "\n\nProvide your estimation by moving the slider shown below (right means more diverse while left means less diverse). <b>You need to move the slider before proceeding to the next task!</b>";
     }
     questionTextP.innerHTML = questionText;
     if (knownPopulation) {
         if (isDemo) {
-            contextText += `Also right, you are presented with ${isRanked["population"] ? "a <b>ranked</b>" : "an <b>unrakned</b>"} population with items from five classes, denoted by color...`;
+            contextText += `You are ${isUserIn ? "also " : ""}presented with ${isRanked["population"] ? "a <b>ranked</b>" : "an <b>unrakned</b>"} population of items from five classes, denoted by their color.`;
         } else {
-            contextText += `${isUserIn ? "Then, g" : "G"}iven the ${isRanked["population"] ? "<b>ranked</b>" : "<b>unranked</b>"} population, ${isUserIn ? "also ": ""}shown right...`;
+            contextText += `Given the ${isRanked["population"] ? "<b>ranked</b>" : "<b>unranked</b>"} population, ${isUserIn ? "also ": ""}shown on the right.`;
         }
         if (isRanked["population"]) {
             drawRankedList(questionId, "population", population, populationRanking, colors, "Population");
@@ -850,8 +850,8 @@ function taskInit() {
         <p>Welcome to our survey!</p>
         <p>You are about to take a survey regarding diversity perception. In what follows, it will be useful to bear in mind that:</p>
         <ul>
-            <li>Your answers need not be elaborate. We are mostly looking for spontaneous feedback.</li>
-            <li>Your answers will be monitored for consistency.</li>
+            <li>You do not need to deliberate your answers. We are mostly looking for spontaneous feedback.</li>
+            <li>Nevertheless, <b>your answers will be monitored for consistency</b>. In case of inconsistencies, no compensation will be provided</li>
             <li>You will be presented with 22 tasks, split into two groups of 11 tasks each.</li>
             <li>The first task in each group is a demo task, designed to help you get accustomed with the rest.</li>
         </ul>
@@ -891,25 +891,6 @@ function startStudy() {
     const condition2 = parseCon(NEXT_TASK["pair1"]);
     CONDITIONS_PAIR = NEXT_TASK["pair0"] + "|" + NEXT_TASK["pair1"];
     ITEMS = NEXT_TASK["instances0"].concat(NEXT_TASK["instances1"]);
-    // console.log(TASK_ID, condition1, condition2, ITEMS);
-    // const condition1 = {
-    //     knownPopulation: true,
-    //     isRanked: {
-    //         population: true,
-    //         sample: false,
-    //     },
-    //     isUserIn: true,
-    //     isObserved: true,
-    // };
-    // const condition2 = {
-    //     knownPopulation: true,
-    //     isRanked: {
-    //         population: true,
-    //         sample: false,
-    //     },
-    //     isUserIn: true,
-    //     isObserved: false,
-    // };
     initializeQuestions(condition1, condition2);
 }
 
@@ -935,7 +916,7 @@ function postResponse() {
     req.addEventListener("error", (event) => {console.log("Error:", event);});
     req.addEventListener("load", () => {
         if (req.status === 200) {
-            console.log("Success!");
+            // console.log("Success!");
             setTimeout(() => {
                 document.getElementsByClassName("load-screen-blocker")[0].remove();
             }, 5000);

@@ -1,5 +1,6 @@
-let TASK_ID = 123;
+let TASK_ID = 0;
 let prevtime = 0;
+let halfway = false;
 
 function nextQuestion(previous, next) {
 	// previous.style.scale = "0%";
@@ -16,9 +17,15 @@ function nextQuestion(previous, next) {
 }
 
 function proceedToNext() {
+    console.log(canProceed);
 	if (canProceed) {
-		canProceed = false;
-		let previous = document.getElementById("Q-" + answeredQuestions);
+        canProceed = false;
+        let previous;
+        if (halfway) {
+            previous = document.getElementById("Q-intermediate");
+        } else {
+            previous = document.getElementById("Q-" + answeredQuestions);
+        }
 		let nextId;
 		answeredQuestions++;
 		if (studyStart) {
@@ -35,7 +42,16 @@ function proceedToNext() {
 			};
 			chosenItems = {};
             postResponse();
-		} else {
+		} else if (!halfway && answeredQuestions === TOTAL_QUESTIONS / 2) {
+            halfway = true;
+            answeredQuestions--;
+            nextId = "Q-intermediate";
+            chosenItems = {};
+            canProceed = true;
+        } else {
+            if (halfway) {
+                halfway = false;
+            }
 			nextId = "Q-" + answeredQuestions;
 			RESPONSES["Q-" + (answeredQuestions - 1)] = {
 				"response": (typeof currentResponse["response"] === "object") ? [...currentResponse["response"]] : parseInt(currentResponse["response"]),
@@ -44,6 +60,9 @@ function proceedToNext() {
 			chosenItems = {};
 		}
 		const next = document.getElementById(nextId);
+        if (next) {
+            console.log(previous, next);
+        }
 		nextQuestion(previous, next);
 		initializeSamplePositions();
 	}
