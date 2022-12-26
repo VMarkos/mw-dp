@@ -634,6 +634,8 @@ function drawUnrankedSet(questionId, set, distribution, colors, label, borderCol
             particle.style.stroke = borderColor;
             particle.style.strokeWidth = "0.4";
             particle.style.fill = colors[i];
+            particle.setAttribute("popClass", i);
+            particle.setAttribute("popPos", j);
             x1 = cx + r * Math.cos(count * deltaTheta);
             y1 = cy + r * Math.sin(count * deltaTheta);
             x2 = cx + R * Math.cos(count * deltaTheta);
@@ -952,7 +954,7 @@ function createPoW() {
         resp: JSON.parse(stringPow),
     };
     POW = powDown;
-    download("proof-of-work.json", JSON.stringify(powDown));
+    download("proof-of-work.zip", JSON.stringify(powDown));
 }
 
 function addLoadingScreen() {
