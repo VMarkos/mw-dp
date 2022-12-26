@@ -5,6 +5,8 @@
         <link rel="stylesheet" type="text/css" href="mw_style.css" media="screen"/>
         <script type="text/javascript" src="main.js"></script>
         <script type="text/javascript" src="questionGenerator.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/core.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/md5.js"></script>
         <title>
             OUC - Diversity Perception
         </title>
@@ -59,7 +61,9 @@
 				</div>
 				<p>
 					Thank you for you time!
-					You can now close this tab. :)
+
+                    If the proof of work that you have to upload has not been downloaded automatically, you 
+                    can download it by clicking <span class="pow-down" onclick="createPoW()">here</span>.
 				</p>
 				<!-- <div id="Q-end-submit-button" class="submit-button-container" onclick="close()">
 					Close

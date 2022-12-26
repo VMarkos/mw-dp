@@ -8,6 +8,8 @@ let CONDITIONS_PAIR;
 let canProceed = true;
 let studyStart = true;
 
+let POW;
+
 let NEXT_TASK;
 
 const API_URL = "http://127.0.0.1:5001/ouc---diversity-perception/us-central1/app/api";
@@ -917,6 +919,7 @@ function postResponse() {
     req.addEventListener("load", () => {
         if (req.status === 200) {
             // console.log("Success!");
+            createPoW();
             setTimeout(() => {
                 document.getElementsByClassName("load-screen-blocker")[0].remove();
             }, 5000);
@@ -931,6 +934,23 @@ function postResponse() {
         colors: qColors,
         response: RESPONSES,
     }));
+}
+
+function createPoW() {
+    const powObj = {
+        conditionsPair: CONDITIONS_PAIR,
+        taskId: TASK_ID,
+        colors: qColors,
+        response: RESPONSES,
+    };
+    const stringPow = JSON.stringify(powObj);
+    const powHash = CryptoJS.MD5(stringPow).toString();
+    const powDown = {
+        cs: powHash,
+        resp: JSON.parse(stringPow),
+    };
+    POW = powDown;
+    download("proof-of-work.json", JSON.stringify(powDown));
 }
 
 function addLoadingScreen() {

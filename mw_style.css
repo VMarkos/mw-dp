@@ -221,6 +221,13 @@ body {
     z-index: 100;
 }
 
+/* POW */
+
+.pow-down {
+    text-decoration: underline dotted #0aa1dd;
+    cursor: pointer;
+}
+
 /*
  * #e8f9fd --- ice
  * #79dae8 --- cyan?

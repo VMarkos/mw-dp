@@ -16,6 +16,7 @@ Various study materials.
 ## TODOs
 [x] Create a walkthrough for each condition;
 [x] Generate a DB and the corresponding API to store the study's results;
+[ ] Generate a download file which will serve as PoW and will contain: (a) taskId; (b) responses for each of the four consistency indices. TAKE CARE to encrypt this file to avoid corrupted PoWs.
 
 ## Models
 1. You have a table with all pairs of conditions, so for each participant you pick up a pair:

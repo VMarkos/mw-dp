@@ -17,7 +17,7 @@ function nextQuestion(previous, next) {
 }
 
 function proceedToNext() {
-    console.log(canProceed);
+    // console.log(canProceed);
 	if (canProceed) {
         canProceed = false;
         let previous;
@@ -60,25 +60,25 @@ function proceedToNext() {
 			chosenItems = {};
 		}
 		const next = document.getElementById(nextId);
-        if (next) {
-            console.log(previous, next);
-        }
+        // if (next) {
+        //     // console.log(previous, next);
+        // }
 		nextQuestion(previous, next);
 		initializeSamplePositions();
 	}
 }
 
-function endStudy() {
-	const resp = {
-		conditionsPair: CONDITIONS_PAIR,
-		taskId: TASK_ID,
-		colors: qColors,
-		response: RESPONSES,
-	}
-	// console.log("Responses:", RESPONSES);
-	download("responses.json", JSON.stringify(resp, null, 2)); // FIXME Do not indent in the actual implementation.
-	// window.location = "https://vmarkos.github.io/mw-dp/";
-}
+// function endStudy() {
+// 	const resp = {
+// 		conditionsPair: CONDITIONS_PAIR,
+// 		taskId: TASK_ID,
+// 		colors: qColors,
+// 		response: RESPONSES,
+// 	}
+// 	// console.log("Responses:", RESPONSES);
+// 	download("responses.json", JSON.stringify(resp, null, 2)); // FIXME Do not indent in the actual implementation.
+// 	// window.location = "https://vmarkos.github.io/mw-dp/";
+// }
 
 // TEMP Stuff for debugging
 
