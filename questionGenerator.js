@@ -12,7 +12,9 @@ let POW;
 
 let NEXT_TASK;
 
-const API_URL = "http://127.0.0.1:5001/ouc---diversity-perception/us-central1/app/api";
+// const API_URL = "http://127.0.0.1:5001/ouc---diversity-perception/us-central1/app/api";
+
+const API_URL = "https://us-central1-ouc---diversity-perception.cloudfunctions.net/app/api";
 
 const RESPONSES = {};
 let currentResponse = {};
@@ -922,7 +924,7 @@ function postResponse() {
             createPoW();
             setTimeout(() => {
                 document.getElementsByClassName("load-screen-blocker")[0].remove();
-            }, 5000);
+            }, 3000);
         }
     });
     req.open("POST", API_URL + "/post-task");
