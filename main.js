@@ -84,7 +84,7 @@ function proceedToNext() {
 
 function download(filename, content) {
     let element = document.createElement("a");
-    element.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(content));
+    element.setAttribute("href", "data:application/zip;base64," + content);
     element.setAttribute("download", filename);
     element.style.display = "none";
     document.body.appendChild(element);

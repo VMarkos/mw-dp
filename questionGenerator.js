@@ -954,7 +954,16 @@ function createPoW() {
         resp: JSON.parse(stringPow),
     };
     POW = powDown;
-    download("proof-of-work.zip", JSON.stringify(powDown));
+    jsonString = JSON.stringify(powDown)
+    genZip(jsonString);
+}
+
+function genZip(jsonString) {
+    const zip = new JSZip();
+    zip.file("proof-of-work.json", jsonString);
+    zip.generateAsync({type: "base64"}).then((content) => {
+        download("proof-of-work.zip", content);
+    });
 }
 
 function addLoadingScreen() {
