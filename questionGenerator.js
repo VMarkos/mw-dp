@@ -14,7 +14,9 @@ let NEXT_TASK;
 
 // const API_URL = "http://127.0.0.1:5001/ouc---diversity-perception/us-central1/app/api";
 
-const API_URL = "https://us-central1-ouc---diversity-perception.cloudfunctions.net/app/api";
+// const API_URL = "https://us-central1-ouc---diversity-perception.cloudfunctions.net/app/api";
+
+const API_URL = "http://127.0.0.1:5001/ouc---diversity-perception/us-central1/app/api";
 
 const RESPONSES = {};
 let currentResponse = {};
@@ -813,7 +815,7 @@ function initializeQuestions(condition1, condition2) {
             isUserIn = condition2["isUserIn"];
             isObserved = condition2["isObserved"];
         }
-        generateQuestion(nextQuestionId, knownPopulation, isRanked, isUserIn, isObserved, isDemo, i);
+        generateQuestion(nextQuestionId, knownPopulation, isRanked, isUserIn, isObserved, isDemo, getConditionIndex(i));
 		drawProgressCircle(nextQuestionId);
     }
 }
@@ -911,7 +913,7 @@ function getNextTask() {
                 resolve();
             }
         })
-        req.open("GET", API_URL + "/next-task");
+        req.open("GET", API_URL + "/next-task-second");
         req.send();
     });
 }
@@ -937,6 +939,7 @@ function postResponse() {
         taskId: TASK_ID,
         colors: qColors,
         response: RESPONSES,
+        items: ITEMS,
     }));
 }
 
