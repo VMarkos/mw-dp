@@ -14,9 +14,9 @@ let NEXT_TASK;
 
 // const API_URL = "http://127.0.0.1:5001/ouc---diversity-perception/us-central1/app/api";
 
-// const API_URL = "https://us-central1-ouc---diversity-perception.cloudfunctions.net/app/api";
+const API_URL = "https://us-central1-ouc---diversity-perception.cloudfunctions.net/app/api";
 
-const API_URL = "http://127.0.0.1:5001/ouc---diversity-perception/us-central1/app/api";
+// const API_URL = "http://127.0.0.1:5001/ouc---diversity-perception/us-central1/app/api";
 
 const RESPONSES = {};
 let currentResponse = {};
