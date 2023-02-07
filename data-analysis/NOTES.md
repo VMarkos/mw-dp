@@ -77,7 +77,7 @@ We proceed with observation tasks, where we look throughout all pairs of such ta
 
 <img src="slider_dist_boxplots.png" alt="Item position distribution in kpSuo condition" width="1200">
 
-As one may observe, there are cases where order seems to matter. In order to quantify this effect, we have performed a two-tailed Mann-Whitney-U test (MWU) with a 5% confidence level. The highlighted plots in the above Figure correspond to those cases where a significant order effect is observed ($p<.05$, normalized Mann-Whitney $U>2.09$, effect sizes $f>55\%$).
+As one may observe, there are cases where order seems to matter. In order to quantify this effect, we have performed a two-tailed Mann-Whitney-U test (MWU) with a 5% confidence level. The highlighted plots in the above Figure correspond to those cases where a significant order effect is observed ($p<.05$, normalized Mann-Whitney $U>2.09$).
 
 *It remains to provide similar plots for diversity, as assessed in observation tasks and for a similar metric of diversity for construction ones (or, probably, all related metrics of diversity we intend to cite).*
 
@@ -93,7 +93,9 @@ In the following Figure, we present all pairs of observation tasks, where:
 * vertical bars cover the interval [Q1 - 1.5 * IQR, Q3 + 1.5 * IQR], where IQR is the inter-quartile radius, Q3 - Q1.
 * red dots correspond to mean values.
 
-Also, we have highlighted any pairs where significant differences between the two distributions are observed (normalized Mann-Whitney $U>1.99$, $p<.05$ two-tailed)
+Also, we have highlighted any pairs where significant differences between the two distributions are observed (normalized Mann-Whitney $U>1.99$, $p<.05$ two-tailed, effect sizes $f>55\%$):
+
+<img src="slider_dist_pair_boxplots.png" alt="Item position distribution in kpSuo condition" width="1200">
 
 #### Constructing Diversity
 
