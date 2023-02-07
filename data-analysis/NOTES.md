@@ -69,9 +69,33 @@ In any case, capital letters refer to `True` assignments of the above variables 
 
 Observe at first how all response time distributions are right-skewed. Apart from that, in the majority of distibutions, order of appearance does not seem to play a significant role regarding participant response time. In any case (with the exception of two conditions), distributions correspnding to the condition appearing second seem to be more right-skewed, which may be attributed to tireness. The most significant exception to this appears to be `KpSuo`, were the distribution corresponding to the condition appearing first seems to have taken more time. One may interpret this difference based on this specific task's complexity (constructing a ranked sample from an unranked population, as diverse as possible).
 
+We proceed with observation tasks, where we look throughout all pairs of such tasks for any order effects. The corresponding box-plots are shown in the following Figure, where:
+* orange lines correspond to Q2;
+* boxes correspond to Q1 - Q3 intervals;
+* vertical bars cover the interval [Q1 - 1.5 * IQR, Q3 + 1.5 * IQR], where IQR is the inter-quartile radius, Q3 - Q1.
+* red dots correspond to mean values.
+
+<img src="slider_dist_boxplots.png" alt="Item position distribution in kpSuo condition" width="1200">
+
+As one may observe, there are cases where order seems to matter. In order to quantify this effect, we have performed a two-tailed Mann-Whitney-U test (MWU) with a 5% confidence level. The highlighted plots in the above Figure correspond to those cases where a significant order effect is observed ($p<.05$, normalized Mann-Whitney $U>2.09$, effect sizes $f>55\%$).
+
 *It remains to provide similar plots for diversity, as assessed in observation tasks and for a similar metric of diversity for construction ones (or, probably, all related metrics of diversity we intend to cite).*
 
-### Constructing Diversity
+### Comparing Conditions
+
+We proceed with compairing pairs of conditions.
+
+### Observing Divrersity
+
+In the following Figure, we present all pairs of observation tasks, where:
+* orange lines correspond to Q2;
+* boxes correspond to Q1 - Q3 intervals;
+* vertical bars cover the interval [Q1 - 1.5 * IQR, Q3 + 1.5 * IQR], where IQR is the inter-quartile radius, Q3 - Q1.
+* red dots correspond to mean values.
+
+Also, we have highlighted any pairs where significant differences between the two distributions are observed (normalized Mann-Whitney $U>1.99$, $p<.05$ two-tailed)
+
+#### Constructing Diversity
 
 We start by considering the simplest cases of construction tasks, i.e., `kpsuo`, `kpSuo`, `kpsUo` and `kpSUo`. In the following Figure we present the distribution of each class in the `kpsuo` condition:
 
@@ -91,7 +115,24 @@ There is a clear "oscillating trend regarding which class is mostly preferred in
 
 <img src="parallel_sets_for_f_ft_f_f.png" alt="Item position distribution in kpSuo condition" width="800">
 
+In the above plot, classes in each bar are sorted (top-to-bottom) by their share in that position. There is an apparent pattern regarding the most frequent class in each position.
+
+We present below the same plots as above but for `kpSUo`, i.e., `kpSuo` but where each participant is assigned to a class:
+
+<img src="dist_for_f_ft_t_f.png" alt="Item position distribution in kpSuo condition" width="800">
+
+<img src="parallel_sets_for_f_ft_t_f.png" alt="Item position distribution in kpSuo condition" width="800">
+
+In both plots we observe that the class that was systematically assigned to each participant (i.e., the third one in this case), was over-represented, compared to the rest. This is also reflected into the ditribution of each sample position, where the third class (i.e., the one assigned to each participant) is preferred into most sample positions. Significantly, while there was a clear pattern when it came to ranked samples &mdash; where the most preferred classes for each position were interchangeably all population classes, appearing in the order they appeared in the sample &mdash; this is not the case when users are assigned to a class. Namely, in most positions (1 - 3, 6 - 8, 11) the most preferred class is each participant's class. Similar distribution is observed for `kpsUo`; the unranked counterpart of `kpSUo`:
+
+<img src="dist_for_f_ff_t_f.png" alt="Item position distribution in kpSuo condition" width="800">
+
+## Key Takeaways
+
+1. Regarding the simple construction scenarios, it seems important for the (relative) majority of participants to maintain a variety in ranking positions, i.e., participants chose to put members of different classes to adjacent positions, so as to ensure that all classes have a representative in a high enough position.
+2. In simple scenarios, where participants where assigned to a class and constructed a maximally diverse sample under no other assumptions, user involvement seemed to play a role in sample construction. However, given the artificial setting of our study, we should be moderate in any judgements we make regarding user involvement and its role in the perception of diversity.
+
 ## TODOs
 
 * We need a section where we examine the effect of each condition (aggregating over all other).
-* ...
+* We need to demonstrate for each pair of conditions, the effect of the new variable. This can be done by focusing on a single dimension (but for construction/observation) and then examining all pairs (staying within observation and/or construction tasks each time) observe any differences.
