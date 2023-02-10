@@ -34,13 +34,11 @@ In the following Figure we can observe the distribution of relative frequencies 
 
 <img src="inconsistency_distributions_test.png" alt="Distribution of relative frequencies of inconsistent responses for both constructed and observed diversity as a function of slider diameter and distance threshold" width="800">
 
-For the same pairs, in the following Figure we demonstrate the distribution of inconsistent tasks for different inconsistency thresholds for both observation, construction and both tasks:
+For the same pairs, in the following Figure we demonstrate the distribution of inconsistent tasks for different inconsistency thresholds for both observation, construction and both tasks (on the left). On the right, we overlay the above distributions (denoted as "Control" distributions) with the corresponding distributions for the inconsistency test pairs::
 
-<img src="total_inconsistency_dist_test.png" alt="Distribution of inconsistent responses with respect to observation, construction or both tasks across the various inconsistency thresholds" width="600">
-
-We now focus on the consistency pairs used in each task to verify user response consistency. In the following Figure, we overlay the above distributions (denoted as "Control" distributions) with the corresponding distributions for the inconsistency test pairs:
-
-<img src="inc_per_response.png" alt="Distribution of inconsistent responses with respect to observation, construction or both tasks across the various inconsistency thresholds for control and test pairs" width="600">
+| | |
+| --- | --- |
+| <img src="total_inconsistency_dist_test.png" alt="Distribution of inconsistent responses with respect to observation, construction or both tasks across the various inconsistency thresholds" width="580"> | <img src="inc_per_response.png" alt="Distribution of inconsistent responses with respect to observation, construction or both tasks across the various inconsistency thresholds for control and test pairs" width="500"> |
 
 Evidently, the inconsistenty test distributions vanish rapidly, compared to control inconsistency distributions, which adds trust to collected responses.
 
@@ -107,29 +105,27 @@ Regarding population knowledge and whether it is ranked or not, both seem to pla
 
 We start by considering the simplest cases of construction tasks, i.e., `kpsuo`, `kpSuo`, `kpsUo` and `kpSUo`. In the following Figure we present the distribution of each class in the `kpsuo` condition:
 
-<img src="dist_for_f_ff_f_f.png" alt="Item distribution in kpsuo condition" width="800">
+| | |
+| --- | --- |
+| <img src="dist_for_f_ff_f_f.png" alt="Item distribution in kpsuo condition" width="600"> | <img src="dist_for_f_ft_f_f.png" alt="Item distribution in kpSuo condition" width="600"> |
 
 So far so good, since all population class distributions seem identical. Indeed, population classes seem to share almost the same distributions when it comes to medians, Q1, Q3 and outliers. Also, the first four of them seem to have similar (**this needs more concise statistical explanation**) mean values. As for the last class, the slight decline in the average number of its items contained in constructed samples, it might be attributed to divisibility. While the desired sample should contain 12 items, there where five classes to choose from in this case, so many participants seem to have realized that as soon as they arrived to the last part of the sample.
 
-Below, we present the same plot for the ranked counterpart of `kpsuo`, i.e., `kpSuo`:
+In the above Figure, on the right, we present the same plot for the ranked counterpart of `kpsuo`, i.e., `kpSuo`. The results (again, as expected) are identical. Indeed, participants seem to have tried to distribute all classes equally, modulo any restrictions mentioned above. However, since any constructed samples were requested to be ordered, we should also examine how the five (5) available population classes where distributed across the twelve (12) sample positions:
 
-<img src="dist_for_f_ft_f_f.png" alt="Item distribution in kpSuo condition" width="800">
-
-The results (again, as expected) are identical. Indeed, participants seem to have tried to distribute all classes equally, modulo any restrictions mentioned above. However, since any constructed samples were requested to be ordered, we should also examine how the five (5) available population classes where distributed across the twelve (12) sample positions:
-
-<img src="ranked_dist_for_f_ft_f_f.png" alt="Item position distribution in kpSuo condition" width="800">
+| | |
+| --- | ---|
+| <img src="ranked_dist_for_f_ft_f_f.png" alt="Item position distribution in kpSuo condition" width="600"> | <img src="parallel_sets_for_f_ft_f_f.png" alt="Item position distribution in kpSuo condition" width="600"> |
 
 There is a clear "oscillating trend regarding which class is mostly preferred in each sample position, which might be illustrated better in the following Figure:
-
-<img src="parallel_sets_for_f_ft_f_f.png" alt="Item position distribution in kpSuo condition" width="800">
 
 In the above plot, classes in each bar are sorted (top-to-bottom) by their share in that position. There is an apparent pattern regarding the most frequent class in each position.
 
 We present below the same plots as above but for `kpSUo`, i.e., `kpSuo` but where each participant is assigned to a class:
 
-<img src="dist_for_f_ft_t_f.png" alt="Item position distribution in kpSuo condition" width="800">
-
-<img src="parallel_sets_for_f_ft_t_f.png" alt="Item position distribution in kpSuo condition" width="800">
+| | |
+| --- | --- |
+| <img src="dist_for_f_ft_t_f.png" alt="Item position distribution in kpSuo condition" width="600"> | <img src="parallel_sets_for_f_ft_t_f.png" alt="Item position distribution in kpSuo condition" width="600"> |
 
 In both plots we observe that the class that was systematically assigned to each participant (i.e., the third one in this case), was over-represented, compared to the rest. This is also reflected into the ditribution of each sample position, where the third class (i.e., the one assigned to each participant) is preferred into most sample positions. Significantly, while there was a clear pattern when it came to ranked samples &mdash; where the most preferred classes for each position were interchangeably all population classes, appearing in the order they appeared in the sample &mdash; this is not the case when users are assigned to a class. Namely, in most positions (1 - 3, 6 - 8, 11) the most preferred class is each participant's class. Similar distribution is observed for `kpsUo`; the unranked counterpart of `kpSUo`:
 
@@ -166,15 +162,119 @@ While the theoretical maximum value of TVD is 1.0, in our case, where we draw a 
 | `KpSuo`   | 0.0482 | 0.0434 | 0.0333 | 0.0333 | 0.0667 |
 | `KpSUo`   | 0.0580 | 0.0472 | 0.0333 | 0.0333 | 0.0667 |
 
-In the above plots, the only change is that the x-axis scale is doubled.
+The above (re-)normalization would scale the x-axis by a factor of two.
+
+We repeat the above analysis in the corresponding ranked cases, were the underlying population is ranked (i.e., `KPSuo`, `KPSUo`, `KPsuo`, `KPsuo`). The corresponding plots are as follows:
+
+| | |
+| --- | --- |
+| <img src="pop_sample_ranked_dist_t_tf_f_f.png" alt="Distribution of TVD for all tasks corresponding to Kpsuo" width="400"> | <img src="pop_sample_ranked_dist_t_tf_t_f.png" alt="Distribution of TVD for all tasks corresponding to Kpsuo" width="400"> |
+| <img src="pop_sample_ranked_dist_t_tt_f_f.png" alt="Distribution of TVD for all tasks corresponding to Kpsuo" width="400"> | <img src="pop_sample_ranked_dist_t_tt_t_f.png" alt="Distribution of TVD for all tasks corresponding to Kpsuo" width="400"> |
+
+Moreover, the (re-)normalized statistics for each condition are shown in the following Table:
+
+| Condition |  Mean  |  Std   |   Q1   |   Q2   |   Q3   |
+| ---       |  ---   |  ---   |   ---  |   ---  |  ---   |
+| `KPsuo`   | 0.0523 | 0.0377 | 0.0333 | 0.0500 | 0.0667 |
+| `KPsUo`   | 0.0565 | 0.0317 | 0.0333 | 0.0500 | 0.0667 |
+| `KPSuo`   | 0.0600 | 0.0302 | 0.0333 | 0.0500 | 0.0667 |
+| `KPSUo`   | 0.0553 | 0.0283 | 0.0333 | 0.0500 | 0.0667 |
+
+The trends are similar to the ones observed for the unranked case, just less skewed &mdash; observe how all means are larger than those of the corresponding unranked conditions. Again, the rationale seems to be the same: participants' choices when it comes to sample distribution are influenced by the unerlying population's distribution. However, since we are considering ranked populations, it also makes sense to examine any effects of ranking regarding the two conditions where both population and sample were ranked. Given that each ranked sample is constructed as a subsequence of a ranked one, one way to measure their dissimilarity would be to think of each ranked sequence as a string from a five-letter alphabet (one letter per population class), so the sample can be generated from the population through deletions (always 12) and a permutation of the remaining elements. If one thinks of a permutation as a sequence of substitutions, then it makes sense to use a variant of the Levenshtein metric to measure distance between population and sample rankings. Namely, since each sample is by 12 items shorter than the corresponding population, we shall denote by $\tilde{\ell}(x,y)$ the Levenshtein distance of $x,y$ reduced by 24-12=12 units, so, $\tilde{\ell}:={\rm lev}(x,y) - 12$. Note that the minimum value of $\tilde{\ell}$ is 0, in case the two rankings coincide, while its (theoretically) maximum value is 12, in case one needs to permute any sample element to match the population ranking (after the appropriate deletions).
+
+The corresponding distributions (as histogreams) are shown below:
+
+| | |
+| --- | --- |
+| <img src="leveshtein_dist_for_t_tt_t_f.png" alt="Levensthein distance distribution for KSPUo" width="400"> | <img src="leveshtein_dist_for_t_tt_f_f.png" alt="Levensthein distance distribution for KSPuo" width="400"> |
+
+The corresponding statistics are shown in the following Table:
+
+| Condition |  Mean  |  Std   |   Q1   |   Q2   |   Q3   |
+| ---       |  ---   |  ---   |   ---  |   ---  |   ---  |
+| `KPSuo`   | 4.0341 | 2.7495 |    1   |    5   |    6   |
+| `KPSUo`   | 3.6656 | 2.6080 |    1   |    3   |    6   |
+
+Observe that in both conditions, about half of the samples have a Levensthein distance of at most 5 from the corresponding ranked population, which means that with at most 5 substitutions, deletions or insertions, one may obtain the ranked sample from the ranked population.
+
+While substitutions are related to permutations, insertions and deletions are not, so we should also consider another metric which captures our case more concretely. One approach would be to consider the following measure (not necessarily metric) of dissimilarity between ranked populations and samples:
+
+```python
+# n = size of population
+# m = size of sample
+# pop = population ranking in terms of classes
+# sample = sample ranking in terms of classes
+
+def custom_distance(sample, pop):
+    for i = 0,2,4,...,22:
+        pop_1 = pop[i]
+        pop_2 = pop[i + 1]
+        sam = sample[i / 2]
+        d = 0
+        if pop_1 != sam and pop_2 == sam:
+            d += 1
+        return d
+```
+
+That is, we split the ranked population into twelve consecutive pairs and compare each of them with the corresponding sample item. If the sample item's class is not one of classes appearing in the corresponding pair, we increase the distance of the two sequences by one. Essentially, we first reduce the population to a set of consecutive pairs of its items and then take a quasi-Hamming distance between that reduced population and the sample. While this function might not yield a metric, in case this takes consistently low values throughout our dataset (for relevant conditions), this shall mean that the ranking of the sample resembles that of the consecutive *pairs* of the corresponding population.
+
+The distributions of these metrics are shown below:
+
+| | |
+| --- | --- |
+| <img src="window_dists_for_t_tt_t_f.png" alt="Levensthein distance distribution for KSPUo" width="400"> | <img src="window_dists_for_t_tt_f_f.png" alt="Levensthein distance distribution for KSPuo" width="400"> |
+
+The corresponding statistics are shown in the following Table:
+
+| Condition |  Mean  |  Std   |   Q1   |   Q2   |   Q3   |
+| ---       |  ---   |  ---   |   ---  |   ---  |   ---  |
+| `KPSuo`   | 3.5434 | 1.4918 |    3   |    4   |    5   |
+| `KPSUo`   | 3.3574 | 1.4215 |    3   |    3   |    4   |
+
+Compared to the maximum value of 12 this measure may attain, observe that 75% of the values are up to 4 (i.e., up to the 33% of the possible values). One could make a modest claim that sample and population rankings are somewhat similar with respect to this measure, in the sense that for any sample, there are at least 12 - 5 = 7 of its elements (i.e., more than half) that coincide with their corresponding population pair.
+
+Another possibly appropriate metric might be the Hamming distance between a ranked sample and the initial part of the corresponding population of equal length. In this case, systematically low values would translate to participants taking mostly into account the first part of the ranked population. The corresponding plots are shown below:
+
+| | |
+| --- | --- |
+| <img src="init_part_dists_for_t_tt_t_f.png" alt="Levensthein distance distribution for KSPUo" width="400"> | <img src="init_part_dists_for_t_tt_f_f.png" alt="Levensthein distance distribution for KSPuo" width="400"> |
+
+The corresponding statistics are shown in the following Table:
+
+| Condition |  Mean  |  Std   |   Q1   |   Q2   |   Q3   |
+| ---       |  ---   |  ---   |   ---  |   ---  |   ---  |
+| `KPSuo`   | 8.3740 | 2.5597 |    8   |    9   |   10   |
+| `KPSUo`   | 8.6573 | 2.1732 |    8   |    9   |   10   |
+
+There seems to be no significant correlation between sample ranking and the ranking of the corresponding population initial part. To further stress this, we present below the corresponding plots using normalized Manhattan distance as our metric:
+
+| | |
+| --- | --- |
+| <img src="manhattan_dists_for_t_tt_t_f.png" alt="Levensthein distance distribution for KSPUo" width="400"> | <img src="manhattan_dists_for_t_tt_f_f.png" alt="Levensthein distance distribution for KSPuo" width="400"> |
+
+The corresponding statistics are shown in the following Table:
+
+| Condition |  Mean  |  Std   |   Q1   |   Q2   |   Q3   |
+| ---       |  ---   |  ---   |   ---  |   ---  |   ---  |
+| `KPSuo`   | 0.3484 | 0.1207 | 0.2917 | 0.3750 | 0.4167 |
+| `KPSUo`   | 0.3442 | 0.1007 | 0.2917 | 0.3542 | 0.3958 |
+
+Again, there appears no significant right skewness, which would hint towards a high similarity between sample and the first half of population rankings.
 
 ## Key Takeaways
 
 1. Regarding the simple construction scenarios, it seems important for the (relative) majority of participants to maintain a variety in ranking positions, i.e., participants chose to put members of different classes to adjacent positions, so as to ensure that all classes have a representative in a high enough position.
 2. In simple scenarios, where participants where assigned to a class and constructed a maximally diverse sample under no other assumptions, user involvement seemed to play a role in sample construction. However, given the artificial setting of our study, we should be moderate in any judgements we make regarding user involvement and its role in the perception of diversity.
 3. In construction tasks where population was known and unranked, we observed that sample and population distributions were significantly similar, indicating that knowledge of the underlying population shifts one's perception of diversity towards the distribution of the population.
+4. In observation tasks, it seems that whether the sample is ranked or not has the most significant effect in the perception of diversity, while the least important (modulo any limitations of our study) seems to be user involvement. Regarding population awareness and ranking, they seem to play some part in participants' judgement in some cases, yet not all. 
+5. In the above, significantly, the only case in which user involvement seemed to play a part in diversity perception is when all other parameters made the case quite ambiguous, i.e., when the population was known and ranked while the sample not.
+
+## Future Work
+
+1. We should revisit the case of known population and study at a deeper level how population ranking affects sample ranking &mdash; while there are strong indications that participants took ranking into account when it came to simply constructed ranked samples, there does not appear any clear pattern in cases where the (ranked) underlying population was known.
 
 ## TODOs
 
 * We need a section where we examine the effect of each condition (aggregating over all other).
 * We need to demonstrate for each pair of conditions, the effect of the new variable. This can be done by focusing on a single dimension (but for construction/observation) and then examining all pairs (staying within observation and/or construction tasks each time) observe any differences.
+* In the case of `KPSUo` and `KPSuo`, we should investigate how position correlates with ranking fidelity (e.g., whether in the first positions populations and samples are similar or not).
