@@ -97,7 +97,13 @@ Also, we have highlighted any pairs where significant differences between the tw
 
 <img src="slider_dist_pair_boxplots.png" alt="Item position distribution in kpSuo condition" width="1200">
 
-#### Constructing Diversity
+We observe that in all but one cases (`KPsuo` vs `KPSuo`), whether the sample is ranked or not plays a significant role in terms of user responses. The statistically insignificant change observed between conditions `KPSuo` and `KPsuo` might be attributed to the fact that the underlying population is known and *ranked*, thus both the sample distribution and ranking might be correlated with those of the population (this seems, indeed, to be the case, as we discuss below).
+
+On the other extreme, in all but one cases (`KPsuo` vs `KPsUo`), user involvement seems to play no significant role in the how participants constructed their samples. This might hint to other criteria (in this case, whether population is known and/or ranked) seem to play a more important role in how participants assess diveristy, while user involvement comes into play only in the ambiguous case when the underlying **population is known and ranked** while the requested **sample is unranked**.
+
+Regarding population knowledge and whether it is ranked or not, both seem to play some role in some cases while not in others (2/4 in both cases).
+
+### Constructing Diversity
 
 We start by considering the simplest cases of construction tasks, i.e., `kpsuo`, `kpSuo`, `kpsUo` and `kpSUo`. In the following Figure we present the distribution of each class in the `kpsuo` condition:
 
@@ -129,10 +135,44 @@ In both plots we observe that the class that was systematically assigned to each
 
 <img src="dist_for_f_ff_t_f.png" alt="Item position distribution in kpSuo condition" width="800">
 
+We consider next the case where participants were requested to construct an unranked sample having knowledge of the underlying unranked population (`Kpsuo`) with no other restrictions. In order to account for the effect of population awareness in this case, we consider the difference between the corresponding sample and population distributions per item, as measured by Total Variation Distance (TVD), defined as follows: $TVD(p,q)=\sup_{A\subseteq\Omega}\lVert p(A)-q(A)\rVert$, which in our case reduces to: $TVD(p,q)=\frac{1}{2}\lVert p-q\rVert_1$, i.e., the half of the $\ell_1$ distance of the corresponding probability mass funcions. The maximum value of TVD is 1 and occurs only in case the two distributions are entirely differrent &mdash; i.e., there is no event in which both distributions assign possible probability. The minimum value of TVD (0) means that the two distributions are identical (in our case of a finite measure space).
+
+In the following Figure, we present the distribution of TVD for all tasks corresponding to `Kpsuo`, alongside the mean TVD and the corresponding Q1, Q2, Q3:
+
+<img src="pop_sample_uranked_dist_t_ff_f_f.png" alt="Distribution of TVD for all tasks corresponding to Kpsuo" width="800">
+
+The distribution is significantly skewed, favoring lower values of TVD ($\mu=0.235$, $Q_1=Q_2=0.0167$, $Q_3=0.0262$, $\sigma=0.0143$). We also present the same plots for ocnditions `KpsUo`, `KpSUo` and `KpSuo`:
+
+| | |
+| --- | --- |
+| <img src="pop_sample_uranked_dist_t_ff_f_f.png" alt="Distribution of TVD for all tasks corresponding to Kpsuo" width="400"> | <img src="pop_sample_uranked_dist_t_ff_t_f.png" alt="Distribution of TVD for all tasks corresponding to Kpsuo" width="400"> |
+| <img src="pop_sample_uranked_dist_t_ft_f_f.png" alt="Distribution of TVD for all tasks corresponding to Kpsuo" width="400"> | <img src="pop_sample_uranked_dist_t_ft_t_f.png" alt="Distribution of TVD for all tasks corresponding to Kpsuo" width="400"> |
+
+In the following Table we summarize the results shown above:
+
+| Condition |  Mean  |  Std   |   Q1   |   Q2   |   Q3   |
+| ---       |  ---   |  ---   |   ---  |   ---  |  ---   |
+| `Kpsuo`   | 0.0235 | 0.0143 | 0.0167 | 0.0167 | 0.0262 |
+| `KpsUo`   | 0.0310 | 0.0166 | 0.0167 | 0.0250 | 0.0333 |
+| `KpSuo`   | 0.0241 | 0.0217 | 0.0167 | 0.0167 | 0.0333 |
+| `KpSUo`   | 0.0290 | 0.0236 | 0.0167 | 0.0167 | 0.0333 |
+
+While the theoretical maximum value of TVD is 1.0, in our case, where we draw a sample half the size of the population, TVD may not take values larger than 0.5. Consequently, we shall normalize the values in the above table, dividing all values by 0.5:
+
+| Condition |  Mean  |  Std   |   Q1   |   Q2   |   Q3   |
+| ---       |  ---   |  ---   |   ---  |   ---  |  ---   |
+| `Kpsuo`   | 0.0470 | 0.0286 | 0.0333 | 0.0333 | 0.0524 |
+| `KpsUo`   | 0.0620 | 0.0332 | 0.0333 | 0.0500 | 0.0667 |
+| `KpSuo`   | 0.0482 | 0.0434 | 0.0333 | 0.0333 | 0.0667 |
+| `KpSUo`   | 0.0580 | 0.0472 | 0.0333 | 0.0333 | 0.0667 |
+
+In the above plots, the only change is that the x-axis scale is doubled.
+
 ## Key Takeaways
 
 1. Regarding the simple construction scenarios, it seems important for the (relative) majority of participants to maintain a variety in ranking positions, i.e., participants chose to put members of different classes to adjacent positions, so as to ensure that all classes have a representative in a high enough position.
 2. In simple scenarios, where participants where assigned to a class and constructed a maximally diverse sample under no other assumptions, user involvement seemed to play a role in sample construction. However, given the artificial setting of our study, we should be moderate in any judgements we make regarding user involvement and its role in the perception of diversity.
+3. In construction tasks where population was known and unranked, we observed that sample and population distributions were significantly similar, indicating that knowledge of the underlying population shifts one's perception of diversity towards the distribution of the population.
 
 ## TODOs
 
