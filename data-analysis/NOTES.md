@@ -99,7 +99,7 @@ Also, we have highlighted any pairs where significant differences between the tw
 
 We observe that in all but one cases (`KPsuo` vs `KPSuo`), whether the sample is ranked or not plays a significant role in terms of user responses. The statistically insignificant change observed between conditions `KPSuo` and `KPsuo` might be attributed to the fact that the underlying population is known and *ranked*, thus both the sample distribution and ranking might be correlated with those of the population (this seems, indeed, to be the case, as we discuss below).
 
-On the other extreme, in all but one cases (`KPsuo` vs `KPsUo`), user involvement seems to play no significant role in the how participants constructed their samples. This might hint to other criteria (in this case, whether population is known and/or ranked) seem to play a more important role in how participants assess diveristy, while user involvement comes into play only in the ambiguous case when the underlying **population is known and ranked** while the requested **sample is unranked**.
+On the other extreme, in all but one cases (`KPsuo` vs `KPsUo`), user involvement seems to play no significant role in parceived participant diversity. This might hint to other criteria (in this case, whether population is known and/or ranked) playing a more important role in how participants assess diveristy, while user involvement comes into play only in the ambiguous case when the underlying **population is known and ranked** while the requested **sample is unranked**.
 
 Regarding population knowledge and whether it is ranked or not, both seem to play some role in some cases while not in others (2/4 in both cases).
 
