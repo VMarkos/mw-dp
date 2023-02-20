@@ -79,10 +79,6 @@ As one may observe, there are cases where order seems to matter. In order to qua
 
 *It remains to provide similar plots for diversity, as assessed in observation tasks and for a similar metric of diversity for construction ones (or, probably, all related metrics of diversity we intend to cite).*
 
-### Comparing Conditions
-
-We proceed with compairing pairs of conditions.
-
 ### Observing Divrersity
 
 In the following Figure, we present all pairs of observation tasks, where:
@@ -117,9 +113,11 @@ In the above Figure, on the right, we present the same plot for the ranked count
 | --- | ---|
 | <img src="ranked_dist_for_f_ft_f_f.png" alt="Item position distribution in kpSuo condition" width="600"> | <img src="parallel_sets_for_f_ft_f_f.png" alt="Item position distribution in kpSuo condition" width="600"> |
 
-There is a clear "oscillating trend regarding which class is mostly preferred in each sample position, which might be illustrated better in the following Figure:
+There is a clear "oscillating trend regarding which class is mostly preferred in each sample position, which might be illustrated better in the above Figure (right). There, classes in each bar are sorted (top-to-bottom) by their share in that position. There is an apparent pattern regarding the most frequent class in each position.
 
-In the above plot, classes in each bar are sorted (top-to-bottom) by their share in that position. There is an apparent pattern regarding the most frequent class in each position.
+However, the above is a macroscopic trend, since we obsreve that after aggregating over all participants response, we get that preference distribution per sample position. Nevertheless, it might be the case that no participants acted like that. Indeed, what is shown in the following Figure verifies the above thought. There, we present the number of participants that followed the assumed alternating pattern throughout their constructed samples (blue curve). As one may observe, there were exactly 0 participants that followed that pattern past position 6, i.e., once all classes had been distributed, they did not stick to their strategy. The rest of the plots indicate fidelity to the alternating pattern with 1 or more (up to 4) exceptions, for comparison.
+
+<img src="alternatin_dists_for_f_ft_f_f.png" alt="Perceived values against theoretically measured diversity values through various diversity metrics" width="600">
 
 We present below the same plots as above but for `kpSUo`, i.e., `kpSuo` but where each participant is assigned to a class:
 
@@ -261,6 +259,29 @@ The corresponding statistics are shown in the following Table:
 
 Again, there appears no significant right skewness, which would hint towards a high similarity between sample and the first half of population rankings.
 
+### User Involvement
+
+So far, we have examined the effect of user involvement in terms of simlpe construction tasks, where it made a significant difference (again, with modesty), shifting both sample distribution and ranking towards the participants' class. However, as we discussed above, invilvement seemed to play little to no role when it came to observation tasks. Thus, we shall now shift our focus to whether assigning a class to participants shifted their preferences in construction tasks, overall.
+
+## Construction vs Observation Tasks
+
+## Measurement
+
+We start with simplest case, where participants were asked to assess the diversity of a given unranked sample. Below we present perceived values against theoretically measured diversity values through various diversity metrics:
+
+<img src="mvp_forf_ff_f_t.png" alt="Perceived values against theoretically measured diversity values through various diversity metrics" width="600">
+
+Interestingly, participants tend to underestimate (wrt to all metrics) the diversity of what would such metrics consider highly diverse sets, while they seem to overestimate less diverse cases. Overall, while any used metrics seem to capture the underlying trend in assessing diversity, participants seem to be more modest in their judgements compared to the corresponding metrics.
+
+With a similar motivation, we juxtapose the diversity of the constructed samples provided by participants in conditions `kpsuo`, `kpsUo`, `kpSuo` and `kpSUo`. Recall that paprticipants were asked to provide a sample as diverse as possible, so, in case the used metrics were accurate enough, we would expect most to be ranked at rather high values. On the contrary, what we observe in the following Figures is that there are snignificantly enough participants that provided constructions that were ranked as moderately diverse by used metrics (especially when focusing on `kpsuo`, where there were no restrictions in terms of ranking or user involvement).
+
+| | |
+| --- | --- |
+| <img src="trunc_const_vs_measured_for_f_ff_f_f.png" alt="Diversity as measured by usual metrics for kpsuo" width="400"> | <img src="trunc_const_vs_measured_for_f_ff_t_f.png" alt="Diversity as measured by usual metrics for kpsUo" width="400"> |
+| <img src="trunc_const_vs_measured_for_f_ft_f_f.png" alt="Diversity as measured by usual metrics for kpSuo" width="400"> | <img src="trunc_const_vs_measured_for_f_ft_t_f.png" alt="Diversity as measured by usual metrics for kpSUo" width="400"> |
+
+As expected, in most cases participants construct samples that rank high with respect to all simple diversity metrics.
+
 ## Key Takeaways
 
 1. Regarding the simple construction scenarios, it seems important for the (relative) majority of participants to maintain a variety in ranking positions, i.e., participants chose to put members of different classes to adjacent positions, so as to ensure that all classes have a representative in a high enough position.
@@ -272,6 +293,8 @@ Again, there appears no significant right skewness, which would hint towards a h
 ## Future Work
 
 1. We should revisit the case of known population and study at a deeper level how population ranking affects sample ranking &mdash; while there are strong indications that participants took ranking into account when it came to simply constructed ranked samples, there does not appear any clear pattern in cases where the (ranked) underlying population was known.
+2. One of the major limitations of our study is that the setting is purely artificial. So, any future work should build on any results of this study but extend them in a more realistic setting &mdash; especially when it comes to user involvement, since but for certain simple cases, there seemed to be no significant effect of that variable, so further investigation is needed.
+3. We shall also explore more complex cases, where diversity might also be considered in a non-shallow (i.e., deep) manner.
 
 ## TODOs
 
